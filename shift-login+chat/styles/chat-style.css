@@ -1,0 +1,161 @@
+/* 
+Assignment: Bull-Shift App | Chat Page - Stylesheet
+Author: Luke Callahan
+*/
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Layout */
+body {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+}
+
+/* Chat wrapper for layout */
+.chat-wrapper {
+  width: 100%;
+  max-width: 600px;
+  padding: 30px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Headings */
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Logged in user display */
+#loggedin-user {
+  padding: 12px;
+  background: #f5f7ff;
+  border: 1px solid #4e73df;
+  border-radius: 6px;
+  font-family: "Courier New", Courier, monospace;
+  color: #4e73df;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Chat message area */
+#messages {
+  border: 1px solid #ddd;
+  height: 400px;
+  padding: 15px;
+  overflow-y: auto;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+/* Message container */
+.message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: #fff;
+  border-left: 3px solid #4e73df;
+  border-radius: 4px;
+}
+
+/* Timestamp span */
+.timestamp {
+  font-size: 0.75em;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+/* Username span */
+.username {
+  font-weight: bold;
+  color: #4e73df;
+  margin-bottom: 4px;
+}
+
+/* Input row */
+#inputRow {
+  display: flex;
+  gap: 10px;
+}
+
+/* Inputs & Button */
+input,
+button {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4e73df;
+}
+
+/* Message input */
+#messageInput {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+#messageInput:disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+  color: #999;
+}
+
+/* Buttons */
+button {
+  border: none;
+  background: #4e73df;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border-radius: 6px;
+  padding: 12px 20px;
+}
+
+button:hover:not(:disabled) {
+  background: #2e59d9;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+#logoutButton {
+  background: #e74c3c;
+  align-self: center;
+  margin-top: 10px;
+}
+
+#logoutButton:hover {
+  background: #c0392b;
+}
+
+/* Message status */
+#login-message {
+  margin-top: 15px;
+  text-align: center;
+  min-height: 20px;
+  font-size: 14px;
+}
