@@ -3,7 +3,7 @@ Assignment: Bull-Shift App | Chat Page - Stylesheet
 Author: Luke Callahan
 */
 
-/* Reset */
+/* ===== RESET ===== */
 * {
   margin: 0;
   padding: 0;
@@ -11,7 +11,7 @@ Author: Luke Callahan
   font-family: Arial, sans-serif;
 }
 
-/* Layout */
+/* ===== LAYOUT ===== */
 body {
   min-height: 100vh;
   padding: 40px 20px;
@@ -21,10 +21,16 @@ body {
   color: #333;
 }
 
-/* Chat wrapper for layout */
-.chat-wrapper {
+.page-wrapper {
+  display: flex;
+  gap: 20px;
   width: 100%;
-  max-width: 600px;
+  max-width: 900px;
+  align-items: flex-start;
+}
+
+.chat-wrapper {
+  flex: 1;
   padding: 30px;
   background: #fff;
   border-radius: 10px;
@@ -32,74 +38,116 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  min-width: 800px;
+  max-width: 800px;
 }
 
-/* Headings */
+/* ===== HEADINGS ===== */
 h2 {
   margin-bottom: 20px;
   text-align: center;
+  color: #4e73df;
 }
 
-/* Logged in user display */
-#loggedin-user {
+/* ===== USER DISPLAY ===== */
+#loggedin-user,
+#chat-header {
   padding: 12px;
   background: #f5f7ff;
   border: 1px solid #4e73df;
   border-radius: 6px;
-  font-family: "Courier New", Courier, monospace;
-  color: #4e73df;
   font-weight: bold;
+  color: #4e73df;
   text-align: center;
 }
 
-/* Chat message area */
+#loggedin-user {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* ===== MESSAGES AREA ===== */
 #messages {
+  flex: 1;
   border: 1px solid #ddd;
   height: 400px;
   padding: 15px;
   overflow-y: auto;
   background: #fafafa;
   border-radius: 6px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Message container */
+/* ===== MESSAGE CONTAINER ===== */
 .message {
   display: flex;
   flex-direction: column;
   margin-bottom: 12px;
-  padding: 8px;
-  background: #fff;
-  border-left: 3px solid #4e73df;
+  padding: 10px;
   border-radius: 4px;
+  line-height: 1;
+  max-width: 70%;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-/* Timestamp span */
+.message.sent {
+  background: #4e73df;
+  color: #fff;
+  border-right: 3px solid #2e59d9;
+  margin-left: auto;
+}
+
+.message.received {
+  background: #e8e8e8;
+  color: #333;
+  border-left: 3px solid #999;
+  margin-right: auto;
+}
+
+/* ===== MESSAGE TEXT ===== */
 .timestamp {
   font-size: 0.75em;
-  color: #888;
   margin-bottom: 4px;
 }
 
-/* Username span */
+.message.sent .timestamp {
+  color: #ddd;
+}
+
+.message.received .timestamp {
+  color: #666;
+}
+
 .username {
   font-weight: bold;
-  color: #4e73df;
   margin-bottom: 4px;
 }
 
-/* Input row */
+.message.sent .username {
+  color: #fff;
+}
+
+.message.received .username {
+  color: #333;
+}
+
+/* ===== INPUT ROW ===== */
 #inputRow {
   display: flex;
   gap: 10px;
+  align-items: stretch;
 }
 
-/* Inputs & Button */
+/* ===== INPUTS & BUTTONS ===== */
 input,
 button {
   padding: 12px;
   border-radius: 6px;
   font-size: 14px;
   border: 1px solid #ddd;
+  transition: 0.2s ease;
 }
 
 input:focus {
@@ -107,12 +155,8 @@ input:focus {
   border-color: #4e73df;
 }
 
-/* Message input */
 #messageInput {
   flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
 }
 
 #messageInput:disabled {
@@ -121,15 +165,12 @@ input:focus {
   color: #999;
 }
 
-/* Buttons */
 button {
   border: none;
   background: #4e73df;
   color: #fff;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.2s ease;
-  border-radius: 6px;
   padding: 12px 20px;
 }
 
@@ -152,10 +193,40 @@ button:disabled {
   background: #c0392b;
 }
 
-/* Message status */
-#login-message {
-  margin-top: 15px;
+/* ===== USER LIST ===== */
+#user-list {
+  width: 200px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: flex-end;
+}
+
+.user-item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f5f7ff;
+  color: #333;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.user-item:hover {
+  background: #e6ecff;
+}
+
+.user-item.active {
+  background: #4e73df;
+  color: #fff;
+}
+
+.no-users {
+  color: #888;
+  font-size: 0.85em;
   text-align: center;
-  min-height: 20px;
-  font-size: 14px;
 }
