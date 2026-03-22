@@ -1,0 +1,232 @@
+/* 
+Assignment: Bull-Shift App | Chat Page - Stylesheet
+Author: Luke Callahan
+*/
+
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== LAYOUT ===== */
+body {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+}
+
+.page-wrapper {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 900px;
+  align-items: flex-start;
+}
+
+.chat-wrapper {
+  flex: 1;
+  padding: 30px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 800px;
+  max-width: 800px;
+}
+
+/* ===== HEADINGS ===== */
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #4e73df;
+}
+
+/* ===== USER DISPLAY ===== */
+#loggedin-user,
+#chat-header {
+  padding: 12px;
+  background: #f5f7ff;
+  border: 1px solid #4e73df;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #4e73df;
+  text-align: center;
+}
+
+#loggedin-user {
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* ===== MESSAGES AREA ===== */
+#messages {
+  flex: 1;
+  border: 1px solid #ddd;
+  height: 400px;
+  padding: 15px;
+  overflow-y: auto;
+  background: #fafafa;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== MESSAGE CONTAINER ===== */
+.message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 4px;
+  line-height: 1;
+  max-width: 70%;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.message.sent {
+  background: #4e73df;
+  color: #fff;
+  border-right: 3px solid #2e59d9;
+  margin-left: auto;
+}
+
+.message.received {
+  background: #e8e8e8;
+  color: #333;
+  border-left: 3px solid #999;
+  margin-right: auto;
+}
+
+/* ===== MESSAGE TEXT ===== */
+.timestamp {
+  font-size: 0.75em;
+  margin-bottom: 4px;
+}
+
+.message.sent .timestamp {
+  color: #ddd;
+}
+
+.message.received .timestamp {
+  color: #666;
+}
+
+.username {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.message.sent .username {
+  color: #fff;
+}
+
+.message.received .username {
+  color: #333;
+}
+
+/* ===== INPUT ROW ===== */
+#inputRow {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/* ===== INPUTS & BUTTONS ===== */
+input,
+button {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  transition: 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4e73df;
+}
+
+#messageInput {
+  flex: 1;
+}
+
+#messageInput:disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+  color: #999;
+}
+
+button {
+  border: none;
+  background: #4e73df;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 12px 20px;
+}
+
+button:hover:not(:disabled) {
+  background: #2e59d9;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+#logoutButton {
+  background: #e74c3c;
+  align-self: center;
+  margin-top: 10px;
+}
+
+#logoutButton:hover {
+  background: #c0392b;
+}
+
+/* ===== USER LIST ===== */
+#user-list {
+  width: 200px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: flex-end;
+}
+
+.user-item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f5f7ff;
+  color: #333;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.user-item:hover {
+  background: #e6ecff;
+}
+
+.user-item.active {
+  background: #4e73df;
+  color: #fff;
+}
+
+.no-users {
+  color: #888;
+  font-size: 0.85em;
+  text-align: center;
+}
