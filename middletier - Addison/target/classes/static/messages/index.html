@@ -1,0 +1,53 @@
+<!--
+Assignment: Bull-Shift App | Messages - HTML
+Author: Luke Callahan
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BS_Shift_Messenger</title>
+    <link rel="stylesheet" href="../bullshift-main/shift-frontend/stylesheets/body-style.css" />
+    <link rel="stylesheet" href="../bullshift-main/shift-frontend/stylesheets/login-box.css" />
+    <link rel="stylesheet" href="../bullshift-main/shift-frontend/stylesheets/chat-box.css" />
+  </head>
+  <body>
+
+    <div class="page-wrapper">
+
+      <!-- login area -->
+      <div class="login-wrapper">
+        <form class="login-box">
+          <h2>Login</h2>
+
+          <input type="text" placeholder="Username" required />
+          <input type="password" placeholder="Password" required />
+
+          <button type="submit">Login</button>
+          <p id="login-message"></p>
+        </form>
+        <button type="button" id="logoutButton">Logout</button>
+      </div>
+
+      <div class="chat-wrapper">
+        <!-- message box -->
+        <div id="loggedin-user">placeholder1@bshift</div>
+        <div id="messages"></div>
+
+        <!-- text input area -->
+        <div id="inputRow">
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="message placeholder2@bshift..."
+            disabled
+          />
+          <button id="sendButton" disabled>Send</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="../bullshift-main/shift-frontend/scripts/script.js"></script>
+    <script type="module" src="../bullshift-main/shift-frontend/scripts/users.js"></script>
+  </body>
+</html>
