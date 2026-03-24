@@ -7,29 +7,25 @@ const input = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
 const loggedInDiv = document.getElementById("loggedin-user");
 const logoutButton = document.getElementById("logoutButton");
-const userListDiv = document.getElementById("user-list"); // NEW - right side panel
+const userListDiv = document.getElementById("user-list");
+const imageInput = document.getElementById("imageInput");
+const imageButton = document.getElementById("imageButton");
+const imagePreviewContainer = document.getElementById("imagePreviewContainer");
 
 // Global variables
 let username = "";
-let activeChat = null; // currently selected user to chat with
+let activeChat = null;
 
-// 1. Pull logged in user from localStorage
+// --- AUTH ---
 const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
 if (!currentUser) {
   window.location.href = "login.html";
 } else {
-  // 2. Set username
   username = currentUser.username;
-
-  // 3. Enable inputs
   input.disabled = false;
   sendButton.disabled = false;
-
-  // 4. Display username
   loggedInDiv.textContent = username + "@bshift";
-
-  // 5. Render user list
   renderUserList();
 }
 
@@ -45,13 +41,21 @@ function getTimestamp() {
   });
 }
 
+// --- IMAGE → BASE64 ---
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+  });
+}
+
 // --- CREATE MESSAGE ELEMENT ---
-// Update createMessageElement to accept a parameter for message origin
-function createMessageElement(messageUsername, text, timestamp) {
+function createMessageElement(messageUsername, text, timestamp, image) {
   const messageDiv = document.createElement("div");
   messageDiv.className = "message";
 
-  // If the message is from the current user, add "sent" class, otherwise "received"
   if (messageUsername === username) {
     messageDiv.classList.add("sent");
   } else {
@@ -66,55 +70,81 @@ function createMessageElement(messageUsername, text, timestamp) {
   usernameSpan.className = "username";
   usernameSpan.textContent = messageUsername + ":";
 
-  const textSpan = document.createElement("span");
-  textSpan.textContent = text;
-
   messageDiv.appendChild(timestampSpan);
   messageDiv.appendChild(usernameSpan);
-  messageDiv.appendChild(textSpan);
+
+  if (text) {
+    const textSpan = document.createElement("span");
+    textSpan.textContent = text;
+    messageDiv.appendChild(textSpan);
+  }
+
+  if (image) {
+    const img = document.createElement("img");
+    img.src = image;
+    img.className = "chat-image";
+    img.style.maxWidth = "200px";
+    img.style.display = "block";
+    img.style.marginTop = "5px";
+    messageDiv.appendChild(img);
+  }
 
   return messageDiv;
 }
 
-// --- GET UNIQUE CHAT KEY ---
-// Sorts both usernames alphabetically so user1_user2 and user2_user1
-// always resolve to the same key regardless of who opened the chat
+// --- CHAT KEY ---
 function getChatKey(userA, userB) {
   return "messages_" + [userA, userB].sort().join("_");
 }
 
-// --- SEND MESSAGE ---
-function sendMessage() {
+// --- SEND MESSAGE (UPDATED) ---
+async function sendMessage() {
   if (!activeChat) {
     alert("Select a user to chat with first.");
     return;
   }
 
   const text = input.value.trim();
-  if (text === "") return;
+  const file = imageInput.files[0];
+
+  if (!text && !file) return;
 
   const timestamp = getTimestamp();
-  const messageElement = createMessageElement(username, text, timestamp);
+  let imageData = null;
+
+  if (file) {
+    imageData = await toBase64(file);
+  }
+
+  const messageElement = createMessageElement(
+    username,
+    text,
+    timestamp,
+    imageData
+  );
 
   messagesDiv.appendChild(messageElement);
-  saveMessage(username, text, timestamp);
+  saveMessage(username, text, imageData, timestamp);
 
   input.value = "";
+  imageInput.value = "";
+  imagePreviewContainer.innerHTML = "";
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// --- SAVE MESSAGE TO LOCALSTORAGE ---
-// Saves to a chat-specific key instead of a global "messages" key
-function saveMessage(username, text, timestamp) {
+// --- SAVE MESSAGE ---
+function saveMessage(username, text, image, timestamp) {
   const chatKey = getChatKey(username, activeChat);
   const messages = JSON.parse(localStorage.getItem(chatKey)) || [];
-  messages.push({ username, text, timestamp });
+
+  messages.push({ username, text, image, timestamp });
+
   localStorage.setItem(chatKey, JSON.stringify(messages));
 }
 
-// --- LOAD MESSAGES FOR ACTIVE CHAT ---
+// --- LOAD MESSAGES ---
 function loadMessages() {
-  messagesDiv.innerHTML = ""; // Clear current messages
+  messagesDiv.innerHTML = "";
 
   if (!activeChat) return;
 
@@ -126,6 +156,7 @@ function loadMessages() {
       msg.username,
       msg.text,
       msg.timestamp,
+      msg.image
     );
     messagesDiv.appendChild(messageElement);
   });
@@ -133,9 +164,7 @@ function loadMessages() {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// --- RENDER USER LIST ---
-// Pulls all users from localStorage and renders them in the right panel
-// Excludes the currently logged-in user from the list
+// --- USER LIST ---
 function renderUserList() {
   const users = JSON.parse(localStorage.getItem("users")) || [];
   userListDiv.innerHTML = "";
@@ -158,13 +187,11 @@ function renderUserList() {
     userItem.addEventListener("click", () => {
       activeChat = user.username;
 
-      // Highlight selected user
       document
         .querySelectorAll(".user-item")
         .forEach((el) => el.classList.remove("active"));
       userItem.classList.add("active");
 
-      // UPDATE PLACEHOLDER instead of header
       input.placeholder = `message ${activeChat}@bshift...`;
 
       loadMessages();
@@ -180,8 +207,42 @@ logoutButton.addEventListener("click", () => {
   window.location.href = "login.html";
 });
 
-// --- EVENT LISTENERS ---
+// --- EVENTS ---
 sendButton.addEventListener("click", sendMessage);
+
+imageButton.addEventListener("click", () => {
+  imageInput.click();
+});
+
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") sendMessage();
+});
+
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+
+  // Clear any existing preview
+  imagePreviewContainer.innerHTML = "";
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "preview-wrapper";
+
+  const img = document.createElement("img");
+  img.src = URL.createObjectURL(file);
+  img.className = "preview-image";
+
+  // Optional: remove button
+  const removeBtn = document.createElement("button");
+  removeBtn.textContent = "✖";
+  removeBtn.className = "remove-preview";
+
+  removeBtn.addEventListener("click", () => {
+    imageInput.value = "";
+    imagePreviewContainer.innerHTML = "";
+  });
+
+  wrapper.appendChild(img);
+  wrapper.appendChild(removeBtn);
+  imagePreviewContainer.appendChild(wrapper);
 });

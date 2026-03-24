@@ -11,47 +11,43 @@ Author: Luke Callahan
   font-family: Arial, sans-serif;
 }
 
-/* ===== LAYOUT ===== */
+/* ===== BODY ===== */
 body {
-  min-height: 100vh;
+  height: 100vh;           /* fill viewport */
+  overflow: hidden;        /* prevent body scroll */
   padding: 40px 20px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center; /* center horizontally */
+  align-items: flex-start;
   color: #333;
+  background: #f0f2f5;     /* subtle background */
 }
 
-.page-wrapper {
-  display: flex;
-  gap: 20px;
+/* ===== MAIN CONTAINER ===== */
+.main-container {
+  display: flex;            /* side-by-side layout */
+  flex-direction: row;
+  gap: 20px;                /* space between chat and sidebar */
   width: 100%;
   max-width: 900px;
-  align-items: flex-start;
+  height: 100%;
 }
 
+/* ===== CHAT WRAPPER ===== */
 .chat-wrapper {
-  flex: 1;
+  flex: 1;                  /* take remaining width */
+  display: flex;
+  flex-direction: column;
   padding: 30px;
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  min-width: 800px;
-  max-width: 800px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  min-height: 0;            /* required for scrolling messages */
+  overflow: hidden;
 }
 
-/* ===== HEADINGS ===== */
-h2 {
-  margin-bottom: 20px;
-  text-align: center;
-  color: #4e73df;
-}
-
-/* ===== USER DISPLAY ===== */
-#loggedin-user,
-#chat-header {
+/* ===== LOGGED-IN USER DISPLAY ===== */
+#loggedin-user {
   padding: 12px;
   background: #f5f7ff;
   border: 1px solid #4e73df;
@@ -59,37 +55,52 @@ h2 {
   font-weight: bold;
   color: #4e73df;
   text-align: center;
+  font-family: "Courier New", Courier, monospace;
+  margin-bottom: 10px;
 }
 
-#loggedin-user {
-  font-family: "Courier New", Courier, monospace;
+/* ===== LOGOUT BUTTON ===== */
+#logoutButton {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+#logoutButton:hover {
+  background: #c0392b;
 }
 
 /* ===== MESSAGES AREA ===== */
 #messages {
-  flex: 1;
+  flex: 1;                 /* fill remaining vertical space */
+  min-height: 0;           /* flexbox fix for scroll */
+  overflow-y: auto;        /* scroll inside box */
   border: 1px solid #ddd;
-  height: 400px;
   padding: 15px;
-  overflow-y: auto;
   background: #fafafa;
   border-radius: 6px;
   display: flex;
   flex-direction: column;
+  margin-bottom: 10px;
 }
 
-/* ===== MESSAGE CONTAINER ===== */
+/* ===== MESSAGE BUBBLES ===== */
 .message {
   display: flex;
   flex-direction: column;
   margin-bottom: 12px;
   padding: 10px;
   border-radius: 4px;
-  line-height: 1;
   max-width: 70%;
   word-wrap: break-word;
   word-break: break-word;
   overflow-wrap: break-word;
+  line-height: 1.2;
 }
 
 .message.sent {
@@ -106,7 +117,6 @@ h2 {
   margin-right: auto;
 }
 
-/* ===== MESSAGE TEXT ===== */
 .timestamp {
   font-size: 0.75em;
   margin-bottom: 4px;
@@ -131,6 +141,58 @@ h2 {
 
 .message.received .username {
   color: #333;
+}
+
+/* ===== MESSAGE IMAGE ===== */
+.chat-image {
+  margin-top: 6px;
+  border-radius: 6px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ===== IMAGE PREVIEW ===== */
+#imagePreviewContainer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.preview-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.preview-image {
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+  object-fit: cover;
+}
+
+.remove-preview {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.remove-preview:hover {
+  background: #c0392b;
 }
 
 /* ===== INPUT ROW ===== */
@@ -183,27 +245,27 @@ button:disabled {
   cursor: not-allowed;
 }
 
-#logoutButton {
-  background: #e74c3c;
-  align-self: center;
-  margin-top: 10px;
+/* Compact image button */
+#imageButton {
+  padding: 0 14px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#logoutButton:hover {
-  background: #c0392b;
-}
-
-/* ===== USER LIST ===== */
+/* ===== SIDEBAR / USER LIST ===== */
 #user-list {
   width: 200px;
+  flex-shrink: 0;
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   padding: 15px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  align-self: flex-end;
+  align-self: stretch; /* match chat height */
 }
 
 .user-item {
@@ -230,3 +292,4 @@ button:disabled {
   font-size: 0.85em;
   text-align: center;
 }
+

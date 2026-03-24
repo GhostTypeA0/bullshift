@@ -12,26 +12,32 @@ Author: Luke Callahan
     <link rel="stylesheet" href="../styles/chat-style.css" />
   </head>
   <body>
-    <div class="chat-wrapper">
-      <!-- message box -->
-      <div id="loggedin-user">placeholder1@bshift</div>
-      <button type="button" id="logoutButton">Logout</button>
-      <div id="messages"></div>
+    <div class="main-container">
+      <div class="chat-wrapper">
+        <!-- message box -->
+        <div id="loggedin-user">placeholder1@bshift</div>
+        <button type="button" id="logoutButton">Logout</button>
+        <div id="messages"></div>
 
-      <!-- text input area -->
-      <div id="inputRow">
-        <input
-          type="text"
-          id="messageInput"
-          placeholder="message placeholder2@bshift..."
-          disabled
-        />
-        <button id="sendButton" disabled>Send</button>
+        <div id="imagePreviewContainer" class="preview-container"></div>
+
+        <!-- text input area -->
+        <div id="inputRow">
+          <input type="file" id="imageInput" accept="image/*" hidden />
+          <button id="imageButton">+</button>
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="message placeholder2@bshift..."
+            disabled
+          />
+          <button id="sendButton" disabled>Send</button>
+        </div>
       </div>
-    </div>
 
-    <!-- Right side user list panel -->
-    <div id="user-list"></div>
+      <!-- Right side user list panel -->
+      <aside id="user-list"></aside>
+    </div>
 
     <script src="../scripts/chat.js"></script>
   </body>
