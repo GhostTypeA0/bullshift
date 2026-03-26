@@ -1,0 +1,33 @@
+<!--
+Assignment: Bull-Shift App | Posts - HTML
+Author: Luke Callahan, Saiyan Ren
+-->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Posts Test</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+
+    <!-- create post area -->
+    <form id="createpost">
+    <h2>Create A Post</h2>
+    <input type="file" id="imageInput" accept="image/*video" />
+    <textarea id="caption" placeholder="Write a caption..."></textarea>
+    <button onclick="addPost()">Post</button>
+    </form>
+
+    <hr>
+
+
+    <!-- feed area -->
+    <div id="feed"></div>
+
+<!-- adds icon library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="script.js"></script>
+  </body>
+</html>
