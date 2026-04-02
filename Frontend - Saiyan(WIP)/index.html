@@ -10,16 +10,17 @@ Author: Luke Callahan, Saiyan Ren
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-
+  <div class="container">
     <!-- create post area -->
     <form id="createpost">
     <h2>Create A Post</h2>
     <input type="file" id="imageInput" accept="image/*video" />
     <textarea id="caption" placeholder="Write a caption..."></textarea>
     <button onclick="addPost()">Post</button>
+    <button id="logoutButton" onclick="logoutUser()">Logout</button>
     </form>
-
-    <hr>
+  </div>
+    
 
 
     <!-- feed area -->
