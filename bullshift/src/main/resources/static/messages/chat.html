@@ -1,0 +1,44 @@
+<!--
+Assignment: Bull-Shift App | Messages - HTML
+Author: Luke Callahan
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BS_Shift_Messenger</title>
+
+    <link rel="stylesheet" href="../bullshift-main/shift-frontend/stylesheets/chat-style.css"/>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="chat-wrapper">
+        <!-- message box -->
+        <div id="loggedin-user">placeholder1@bshift</div>
+        <button type="button" id="logoutButton">Logout</button>
+        <div id="messages"></div>
+
+        <div id="imagePreviewContainer" class="preview-container"></div>
+
+        <!-- text input area -->
+        <div id="inputRow">
+          <input type="file" id="imageInput" accept="image/*" hidden />
+          <button id="imageButton">+</button>
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="message placeholder2@bshift..."
+            disabled
+          />
+          <button id="sendButton" disabled>Send</button>
+        </div>
+      </div>
+
+      <!-- Right side user list panel -->
+      <aside id="user-list"></aside>
+    </div>
+
+    <script src="../bullshift-main/shift-frontend/scripts/chat.js"></script>
+  </body>
+</html>
