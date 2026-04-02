@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BullShift Posts</title>
+
+    <!-- main stylesheet for posts page -->
+    <link rel="stylesheet" href="/stylesheets/posts.css" />
+
+    <!-- font-awesome for icons (like, comment, etc.) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <!-- top nav bar shared across pages -->
+        <nav class="navbar">
+            <h1>BullShift</h1>
+
+            <!-- nav links + logout button -->
+            <div class="nav-links">
+                <a href="index.html">Chat</a>
+                <!-- highlight the current page -->
+                <a href="posts.html" class="active">Posts</a>
+                <button id="logoutButton">Logout</button>
+            </div>
+        </nav>
+
+        <div class="content">
+            <!-- create-post form (image + caption) -->
+            <form id="createpost" class="create-post-form">
+                <h2>Create A Post</h2>
+
+                <!-- image upload input -->
+                <input type="file" id="imageInput" accept="image/*" />
+
+                <!-- preview of selected image (hidden until user picks one) -->
+                <img id="imagePreview" class="image-preview" style="display: none;" />
+
+                <!-- caption text area -->
+                <textarea id="caption" placeholder="Write a caption..."></textarea>
+
+                <!-- submit button -->
+                <button type="submit" id="postButton">Post</button>
+            </form>
+
+            <hr>
+
+            <!-- feed container where posts get injected -->
+            <div id="feed" class="feed"></div>
+        </div>
+    </div>
+
+    <!-- JS for handling post creation + rendering feed -->
+    <script src="/scripts/posts.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BullShift Login</title>
+
+    <!-- Login page styling (kept separate for clarity + maintainability) -->
+    <link rel="stylesheet" href="/stylesheets/login-box.css" />
+</head>
+
+<body class="login-bg">
+
+<div class="login-wrapper">
+    <!-- Main login/register container. JS toggles between modes. -->
+    <form class="login-box" id="loginForm">
+        <!-- Title updates dynamically depending on login/register mode -->
+        <h2 id="formTitle">BullShift Login</h2>
+
+        <!-- Username is required for both login and registration -->
+        <input id="usernameInput" type="text" placeholder="Username" required />
+
+        <!-- Email only used during registration. Hidden by default. -->
+        <input id="emailInput" type="email" placeholder="Email (optional)" style="display: none;" />
+
+        <!-- Password required for both modes -->
+        <input id="passwordInput" type="password" placeholder="Password" required />
+
+        <!-- Login button visible by default -->
+        <button id="loginButton" type="button">Login</button>
+
+        <!-- Register button only shown when toggled into register mode -->
+        <button id="registerButton" type="button" style="display: none;">Register</button>
+
+        <!-- Inline message area for errors/success feedback -->
+        <p id="login-message"></p>
+        
+        <!-- Link that switches between login and register modes -->
+        <a href="#" id="toggleLink">Need an account? Register</a>
+    </form>
+</div>
+
+<!-- Handles login, registration, mode toggling, and auto-login after register -->
+<script src="/scripts/users.js"></script>
+</body>
+</html>

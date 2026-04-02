@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BullShift Messenger</title>
+
+    <link rel="stylesheet" href="/stylesheets/global.css" />
+    <link rel="stylesheet" href="/stylesheets/chat-box.css" />
+</head>
+
+<body class="chat-page">
+    <div class="page-wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <h3>BullShift</h3>
+            <div class="nav-links">
+                <a href="index.html" class="active">Chat</a>
+                <a href="posts.html">Posts</a>
+                <button id="logoutButton">Logout</button>
+            </div>
+        </nav>
+
+        <div class="main-container">
+            <!-- User list panel -->
+            <div class="user-list">
+                <h3>Users</h3>
+                <div id="user-list"></div>
+            </div>
+
+            <!-- Chat panel -->
+            <div class="chat-container">
+                <div id="chatHeader">
+                    <span id="activeChatName">Select a user to chat</span>
+                </div>
+
+                <div id="messages"></div>
+
+                <div id="inputRow">
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Type a message..."
+                        disabled
+                    />
+                    <button id="sendButton" disabled>Send</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    
+    <script src="/scripts/chat.js"></script>
+    <script src="/scripts/users.js"></script>
+    
+</body>
+</html>
