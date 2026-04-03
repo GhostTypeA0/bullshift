@@ -70,9 +70,9 @@ loginForm.addEventListener("submit", function (e) {
     // 1. store current user in lS
     localStorage.setItem("currentUser", JSON.stringify(user));
 
-    // 2. auto navigate to chat (can be changed when adding other features)
+    // 2. auto navigate to index page
     setTimeout(() => {
-      window.location.href = "chat.html";
+      window.location.href = "index.html";
     }, 1000); // 1 second delay so user sees success message
 
     loginForm.reset();
@@ -81,24 +81,3 @@ loginForm.addEventListener("submit", function (e) {
     message.textContent = "Invalid username or password.";
   }
 });
-
-// --- Render Users Table ---
-function renderUsers() {
-  const users = JSON.parse(localStorage.getItem("users")) || [];
-  const tbody = document.querySelector("#usersTable tbody");
-  tbody.innerHTML = "";
-
-  // add new table entry per new created user and append to table
-  users.forEach((user) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${user.username}</td>
-      <td>${user.email || ""}</td>
-      <td>${user.password}</td>
-    `;
-    tbody.appendChild(row);
-  });
-}
-
-// Load users on page load
-renderUsers();

@@ -19,7 +19,7 @@ Author: Luke Callahan
       </div>
 
       <!-- user creation card -->
-      <form id="createForm">
+      <form id="createForm"  style="display: none">
         <h2>Create User</h2>
         <input type="text" id="username" placeholder="Username" required />
         <input type="email" id="email" placeholder="Email" />
@@ -29,7 +29,7 @@ Author: Luke Callahan
       </form>
 
       <!-- login card -->
-      <form id="loginForm" style="display: none">
+      <form id="loginForm">
         <h2>User Login</h2>
         <input type="text" id="loginUsername" placeholder="Username" required />
         <input
@@ -42,22 +42,6 @@ Author: Luke Callahan
         <p id="loginMessage"></p>
       </form>
     </div>
-
-    <!-- users table to see created users go into local storage -->
-    <!-- THIS WILL MOVE TO THE DB ONCE IMPLEMENTED -->
-    <!-- WE DON'T WANT A TABLE ON THE FRONT END WITH REAL USER INFORMATION -->
-    <h2>Users</h2>
-    <table id="usersTable">
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Password</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
     <script src="../scripts/login-script.js"></script>
   </body>
 </html>
