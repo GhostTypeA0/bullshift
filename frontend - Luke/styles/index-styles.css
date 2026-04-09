@@ -16,45 +16,68 @@ body {
   height: 100vh;
   overflow: hidden;
   display: flex;
-  background: #7d858a;
+  background: linear-gradient(
+    to bottom,
+    rgb(255, 255, 255),
+    rgb(238, 238, 238)
+  );
 }
 
 /* ===== SIDEBAR ===== */
 .sidebar {
-  width: 200px;
+  width: 10%;
+  min-width: 10%;
   background: #fff;
-  padding: 20px;
+  padding: 1%;
+  margin: .5%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  gap: 10px;
   z-index: 1;
-  border-radius: 10px;
+  border-radius: 25px;
+  box-shadow:
+    inset -3px -3px 6px #cfcfcf,
+    inset 3px 3px 6px #fdfdfd;
 }
 
 .sidebar h2 {
   color: #333;
   font-size: 18px;
-  margin-bottom: 5px;
+  margin: 5%;
   text-align: center;
   font-weight: bold;
 }
 
-.sidebar-spacer {
-  flex: 1;
+/* ===== LOGGED-IN USER DISPLAY ===== */
+#loggedin-user {
+  padding: 10px;
+  background: #f5f7ff;
+  border: 1px solid #4e73df;
+  border-radius: 25px;
+  font-weight: bold;
+  color: #4e73df;
+  text-align: center;
+  font-family: "Courier New", Courier, monospace;
+  margin-bottom: 10px;
+  box-shadow:
+    inset 3px 3px 6px #8c8de2,
+    inset -3px -3px 6px #f0f2fd;
 }
 
 /* ===== BUTTONS ===== */
 .button {
   padding: 12px;
   border: none;
-  border-radius: 6px;
+  border-radius: 25px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: bold;
-  color: #fff;
+  color: #4e73df;
   transition: 0.2s ease;
   font-family: Arial, sans-serif;
+  font-weight: bold;
+  box-shadow:
+    inset 3px 3px 6px #fafafa,
+    inset -3px -3px 6px #f1f1f1;
 }
 
 .button:hover {
@@ -62,38 +85,50 @@ body {
 }
 
 .chatBtn {
-  background: #4e73df;
+  background: #f5f7ff;
 }
 
 .postsBtn {
-  background: #4e73df;
+  background: #f5f7ff;
 }
 
 .chatBtn:hover {
-  background: #2e59d9;
+  background: #ffffff;
 }
 
 .postsBtn:hover {
-  background: #2e59d9;
+  background: #ffffff;
 }
 
 .button.active {
-  box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.2);
+  background: #4e64e0;
+  color: white;
+  box-shadow:
+    inset -3px -3px 6px #232599,
+    inset 3px 3px 6px #c8d2ff;
 }
 
 #logoutButton {
+  padding: 12px;
   margin-top: auto;
-  background: #e74c3c;
-  color: white;
+  background: #fcfcfc;
+  color: #e74c3c;
   border: none;
-  border-radius: 6px;
-  padding: 10px;
+  border-radius: 25px;
+  transition: 0.2s ease;
   font-weight: bold;
+  font-size: 14px;
   cursor: pointer;
+  box-shadow:
+    inset 3px 3px 6px #fafafa,
+    inset -3px -3px 6px #f1f1f1;
+  text-shadow:
+    none 1px 1px 0 #fff,
+    -1px -1px 0 #aaa;
 }
 
 #logoutButton:hover {
-  background: #c0392b;
+  background: #ffffff;
 }
 
 /* ===== CONTENT ===== */
@@ -113,29 +148,28 @@ body {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: 97%;
   color: #000000;
   font-size: 40px;
-  margin-bottom: 5px;
+  margin-bottom: .5%;
+  margin-top: .5%;
   text-align: center;
   font-weight: bold;
+  border-radius: 25px;
 }
 
-
 #pages-container.single-page iframe {
-  width: 80%;
-  max-width: 95%;
-  height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  border-radius: 25px;
   border: none;
 }
 
 #pages-container.two-pages iframe {
-  width: 48%;
-  height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  width: 50%;
+  height: 100%;
+  border-radius: 25px;
   border: none;
 }
 
@@ -144,15 +178,4 @@ body {
   background: #fff;
 }
 
-/* ===== LOGGED-IN USER DISPLAY ===== */
-#loggedin-user {
-  padding: 12px;
-  background: #f5f7ff;
-  border: 1px solid #4e73df;
-  border-radius: 6px;
-  font-weight: bold;
-  color: #4e73df;
-  text-align: center;
-  font-family: "Courier New", Courier, monospace;
-  margin-bottom: 10px;
-}
+

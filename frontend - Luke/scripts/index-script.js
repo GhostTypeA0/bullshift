@@ -17,11 +17,29 @@ let postsActive = false;
 let chatFrame = null;
 let postsFrame = null;
 
+
+// now everything is saved so it doesn't reload everything on startup
+function saveIframeState() {
+  localStorage.setItem("iframeState", JSON.stringify({
+    chatActive,
+    postsActive
+  }));
+}
+
+// and will reload from lS
+function loadIframeState() {
+  const saved = localStorage.getItem("iframeState");
+  if (saved) {
+    const state = JSON.parse(saved);
+    chatActive = state.chatActive;
+    postsActive = state.postsActive;
+    btnChat.classList.toggle("active", chatActive);
+    btnPosts.classList.toggle("active", postsActive);
+  }
+}
+
 // --------pulled & edited from chat.js----------
 let username = "";
-
-// defualt state
-container.innerHTML = "Select a Page to Start!";
 
 // --------pulled & edited from chat.js----------
 // Section 2: Auth Check
@@ -34,55 +52,52 @@ if (!currentUser) {
 } else {
   username = currentUser.username;
   loggedInDiv.textContent = username;
+  loadIframeState();
+  if (chatActive || postsActive) {
+    updateLayout();
+  }
 }
 
-// Section 3: Layout
-// Note: Change out "psudoChat.html" and "psudoPosts.html" when implementing
+// Section 3: iFrames
+// iframes are created ONCE now
+function createIframes() {
+  chatFrame = document.createElement("iframe");
+  chatFrame.src = "../html/chat.html";
+  chatFrame.className = "page-frame";
+  chatFrame.id = "chat-frame";
+
+  postsFrame = document.createElement("iframe");
+  postsFrame.src = "../html/posts.html";
+  postsFrame.className = "page-frame";
+  postsFrame.id = "posts-frame";
+
+  container.appendChild(chatFrame);
+  container.appendChild(postsFrame);
+}
+
+// and only their visibility changes rather than a full reload
 function updateLayout() {
-  container.innerHTML = "";
+  if (!chatFrame && !postsFrame) {
+    createIframes();
+  }
 
-
-  // both pages loaded
   if (chatActive && postsActive) {
     container.className = "two-pages";
-    chatFrame = document.createElement("iframe");
-    chatFrame.src = "../html/psudoChat.html";
-    chatFrame.className = "page-frame";
-    chatFrame.id = "chat-frame";
-
-    postsFrame = document.createElement("iframe");
-    postsFrame.src = "../html/psudoPosts.html";
-    postsFrame.className = "page-frame";
-    postsFrame.id = "posts-frame";
-
-    container.appendChild(chatFrame);
-    container.appendChild(postsFrame);
-  }
-
-  // ONLY chat loaded
-  else if (chatActive) {
+    chatFrame.style.display = "";
+    postsFrame.style.display = "";
+  } else if (chatActive) {
     container.className = "single-page";
-    chatFrame = document.createElement("iframe");
-    chatFrame.src = "../html/psudoChat.html";
-    chatFrame.className = "page-frame";
-    chatFrame.id = "chat-frame";
-    container.appendChild(chatFrame);
-  }
-
-  // ONLY posts active
-  else if (postsActive) {
+    chatFrame.style.display = "";
+    postsFrame.style.display = "none";
+  } else if (postsActive) {
     container.className = "single-page";
-    postsFrame = document.createElement("iframe");
-    postsFrame.src = "../html/psudoPosts.html";
-    postsFrame.className = "page-frame";
-    postsFrame.id = "posts-frame";
-    container.appendChild(postsFrame);
-  }
-  
-  // empty page
-  else {
+    chatFrame.style.display = "none";
+    postsFrame.style.display = "";
+  } else {
     container.className = "";
-    container.innerHTML = "Select a Page to Start!";
+    container.innerHTML = "";
+    chatFrame = null;
+    postsFrame = null;
   }
 }
 
@@ -91,6 +106,7 @@ function updateLayout() {
 // --------pulled & edited from chat.js----------
 logoutButton.addEventListener("click", () => {
   localStorage.removeItem("currentUser");
+  localStorage.removeItem("iframeState");
   window.location.href = "login.html";
 });
 
@@ -98,6 +114,7 @@ logoutButton.addEventListener("click", () => {
 btnChat.addEventListener("click", () => {
   chatActive = !chatActive;
   btnChat.classList.toggle("active", chatActive);
+  saveIframeState();
   updateLayout();
 });
 
@@ -105,5 +122,6 @@ btnChat.addEventListener("click", () => {
 btnPosts.addEventListener("click", () => {
   postsActive = !postsActive;
   btnPosts.classList.toggle("active", postsActive);
+  saveIframeState();
   updateLayout();
 });

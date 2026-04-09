@@ -7,7 +7,7 @@
 const messagesDiv = document.getElementById("messages");
 const input = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
-const loggedInDiv = document.getElementById("loggedin-user");
+const chatPartnerDiv = document.getElementById("chat-partner");
 const logoutButton = document.getElementById("logoutButton");
 const userListDiv = document.getElementById("user-list");
 const imageInput = document.getElementById("imageInput");
@@ -29,7 +29,7 @@ if (!currentUser) {
   username = currentUser.username;
   input.disabled = false;
   sendButton.disabled = false;
-  loggedInDiv.textContent = username + "@bshift";
+  chatPartnerDiv.textContent = "Select a User to Start Chatting!";
   renderUserList();
 }
 
@@ -217,6 +217,7 @@ function renderUserList() {
       userItem.classList.add("active");
 
       input.placeholder = `message ${activeChat}@bshift...`; // eg. "message dev.callahan@bshift..."
+      chatPartnerDiv.textContent = activeChat + "@bshift";
 
       // calls message loader
       loadMessages();
@@ -227,12 +228,6 @@ function renderUserList() {
 }
 
 // Section 9: Event handlers
-// logout
-logoutButton.addEventListener("click", () => {
-  localStorage.removeItem("currentUser");
-  window.location.href = "login.html";
-});
-
 // send message handler
 sendButton.addEventListener("click", sendMessage);
 
