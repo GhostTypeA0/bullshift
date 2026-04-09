@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BullShift Posts</title>
+
+    <link rel="stylesheet" href="/stylesheets/posts.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="page-wrapper">
+
+        <nav class="navbar">
+            <h1>BullShift</h1>
+            <div class="nav-links">
+                <a href="index.html">Chat</a>
+                <a href="posts.html" class="active">Posts</a>
+                <button id="logoutButton">Logout</button>
+            </div>
+        </nav>
+
+        <div class="content">
+            <form id="createpost" class="create-post-form">
+                <h2>Create A Post</h2>
+
+                <input type="file" id="imageInput" accept="image/*" />
+                <img id="imagePreview" class="image-preview" style="display: none;" />
+                <textarea id="caption" placeholder="Write a caption..."></textarea>
+
+                <button type="submit" id="postButton">Post</button>
+            </form>
+
+            <hr>
+
+            <div id="feed" class="feed"></div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <script src="/scripts/posts.js"></script>
+</body>
+</html>

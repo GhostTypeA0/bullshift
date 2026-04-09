@@ -1,0 +1,27 @@
+package com.bullshift.bullshift_backend.model;
+
+// Simple DTO used for WebSocket communication.
+// Not a JPA entity — this is only for sending/receiving chat payloads.
+public class ChatMessage {
+
+    private String sender;
+    private String receiver;
+    private String content;
+
+    public ChatMessage() {}
+
+    public ChatMessage(String sender, String receiver, String content) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.content = content;
+    }
+
+    public String getSender() { return sender; }
+    public void setSender(String sender) { this.sender = sender; }
+
+    public String getReceiver() { return receiver; }
+    public void setReceiver(String receiver) { this.receiver = receiver; }
+
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
+}
