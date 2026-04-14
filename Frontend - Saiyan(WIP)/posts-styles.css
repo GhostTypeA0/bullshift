@@ -50,8 +50,6 @@ button {
   border-radius: 8px;
 }
 
-
-
 /* container for the whole post */
 .post {
   border: 1px solid #ddd;
@@ -103,6 +101,12 @@ button {
 }
 
 
+.comment-text {
+  margin-bottom: 5px; 
+  border-bottom: 1px solid #eee;
+}
+
+
 /* style for the delete button */
 .delete-btn {         
   padding: 5px 10px;        
@@ -140,6 +144,29 @@ button[onclick^="deletePost"] {
 button[onclick^="deletePost"]:hover {
   background-color: #272727; 
   cursor: pointer;
+}
+
+#logoutButton {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+/* shows a question mark/help cursor */
+.timestamp {
+    cursor: help; 
+    display: inline-block;
+}
+
+/* changes color on hover */
+.timestamp:hover {
+    color: #007bff; 
+    text-decoration: underline;
 }
 
 /* Reset */
@@ -269,4 +296,17 @@ button:hover {
 
 .toggle-buttons button:hover {
   background: #2e59d9;
+}
+
+/* ===== CHAT WRAPPER ===== */
+.chat-wrapper {
+  flex: 1;                  /* take remaining width */
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  min-height: 0;            /* required for scrolling messages */
+  overflow: hidden;
 }
