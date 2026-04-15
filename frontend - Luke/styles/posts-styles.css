@@ -1,0 +1,213 @@
+/*
+Assignment: Bull-Shift App | Post Styling - CSS
+Author: Luke Callahan
+/*
+
+/* =============================================== */
+/* I had to rebuild this entire thing from scratch */
+/* =============================================== */
+
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== SCROLL BAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(0,0,0,0);
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 158, 8);
+  border-radius: 10px;
+}
+
+
+/* ===== BODY ===== */
+body {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgb(22, 22, 22);
+}
+
+/* ===== POST CREATOR ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+/* DIV FOR INPUTS */
+#mediaInput {
+  display: flex;
+  flex-direction: row;
+  gap: 10%;
+}
+
+#caption {
+  font-size: 15;
+  resize: none;
+  color: rgb(255,255,255);
+  background: rgb(0,0,0,0);
+  border: none;
+  padding-top: 15px;
+}
+
+/* Compact image button */
+#imageButton {
+  padding: 0 14px;
+  min-width: 50px;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#uploadButton {
+  filter: invert(100%);
+  transform: scale(1.5);
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  margin-bottom: 5%;
+  background: rgb(15, 15, 15);
+  border: 1px solid rgb(44,44,44);
+  color: rgb(255,255,255);
+  border-radius: 10px;
+}
+
+
+/* ===== POSTS ===== */
+.post {
+  display: flex;
+  flex-direction: column;
+  background: rgb(15,15,15);
+  color: rgb(255,255,255);
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
+}
+
+.post img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.post textarea {
+  padding: 12px;
+  font-size: 14px;
+  transition: 0.2s ease;
+  background: rgb(0,0,0,0);
+  border: rgb(22,22,22);
+  color: rgb(255,255,255);
+}
+
+button {
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  padding: 5px 20px;
+  background: rgb(22,22,22);
+  border: 1px solid rgb(44,44,44);
+  transition: 0.2s ease;
+  align-items: center;
+}
+
+button:hover {
+  background: rgb(0, 158, 8);
+}
+
+/* like container styling */
+#like-container {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1em;
+}
+
+
+
+
+/* BELOW THIS DOESN'T WORK */
+
+.comment-section {
+  border: 1px solid #ff0000;
+  padding: 10px;
+}
+
+.comment-section input {
+  width: 70%;
+  padding: 10px;
+  gap: 10px;
+  border: 1px solid #ff0000;
+  border-radius: 4px;
+}
+
+.comment-section button {
+  padding: 8px 12px;
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+.comment-text {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* ABOVE THIS DOESN'T WORK */
+
+
+
+
+/* like button Hover */
+.fa-thumbs-up:hover {
+  filter: invert(100%);
+  transition: .2s;
+  cursor: pointer; 
+}
+
+
+/* delete button Hover */
+button[onclick^="deletePost"]:hover {
+  background-color: rgb(182, 0, 0);
+  cursor: pointer;
+}
+
+/* this is timeStamp hover effect for the posts*/
+.timeStamp {
+  cursor: pointer; 
+  display: inline-block;
+}
+
+/* changes color on hover */
+.timeStamp:hover {
+  color: rgb(0, 158, 8);
+  text-decoration: underline;
+}
+
+
