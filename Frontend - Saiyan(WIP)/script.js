@@ -51,24 +51,26 @@ function renderPosts() {
 
         /* shows previous comments */
         const commentsHTML = (post.comments || []).map((comment, commentIndex) => {
-        /* checks if current user is the post owner and or the comment author to delete comments */
+        /* checks if current user is the post owner and or the comment author to delete comments */ /* timestamp class will have the hover effect with formatted date */  
         const canDeleteComment = currentUser && (post.username === currentUser || comment.username === currentUser);
-            
-            return `
-                <div class="comment-text">
-                    <strong>${comment.username || 'Anonymous'}:</strong> <span>${comment.text}</span>
-                    <small style="color: gray; display: block; font-size: 0.75em;">${comment.date}</small>
-                    ${canDeleteComment ? `<button class="delete-btn" style="font-size:0.7em" onclick="deleteComment(${realIndex}, ${commentIndex})">Delete</button>` : ''}
-                </div>
-             `;
-            }).join('');
+    
+        return `
+        <div class="comment-text">
+        <strong>${comment.username || 'Anonymous'}:</strong> 
+        <span>${comment.text}</span>
+        <small class="timestamp" title="Posted on: ${comment.date}" style="color: gray; display: block; font-size: 0.75em; cursor: help;">
+            ${comment.date}
+        </small>
+        ${canDeleteComment ? `<button class="delete-btn" style="font-size:0.7em" onclick="deleteComment(${realIndex}, ${commentIndex})">Delete</button>` : ''}
+        </div>
+        `;
+    }).join('');
 
-        /* creates and returns a new string */  
+        /* creates and returns a new string */ /* timeStamp class will have the hover effect with formatted date */  
             div.innerHTML = `
             <div class="post-wrapper">
-            <img src="${post.image}" alt="Post image" style="max-width:100%">
-            <!-- Added title attribute here for the hover effect -->
-            <p class="timestamp" title="Posted on: ${formattedDate}">
+            <img src="${post.image}" alt="Post image" style="max-width:100%"> 
+            <p class="timeStamp" title="Posted on: ${formattedDate}">            
             <i>${formattedDate}</i>
             </p>
             <p><strong>${post.username || 'Anonymous'}</strong>: ${post.caption}</p>
