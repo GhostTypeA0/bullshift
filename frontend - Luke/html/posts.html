@@ -1,14 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Posts Page</title>
-    <style>
-        body { margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background: #ebffee; font-family: Arial, sans-serif; }
-        h1 { color: #00ff40; }
-    </style>
-</head>
-<body>
-    <h1>Posts Go Here</h1>
-</body>
+<!--
+Assignment: Bull-Shift App | Posts - HTML
+Author: Luke Callahan, Saiyan Ren
+-->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Posts Test</title>
+    <link rel="stylesheet" href="../styles/posts-styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- create post area -->
+      <form id="createpost">
+        <h2>Create A Post</h2>
+        <!-- media input container with button based file selection image -->
+        <div id=mediaInput>
+          <input type="file" id="imageInput" accept="image/*video" hidden />
+          <button id="imageButton">
+            <img src="../assets/upload.svg" alt="+" id="uploadButton">
+          </button>
+        <textarea id="caption" placeholder="Write a caption..."></textarea>
+        </div>
+        <button onclick="addPost()">Post</button>
+      </form>
+    </div>
+
+    <!-- feed area -->
+    <div id="feed"></div>
+
+    <!-- adds icon library -->
+     <!-- please replace this with an actual icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <script src="../scripts/posts.js"></script>
+  </body>
 </html>
