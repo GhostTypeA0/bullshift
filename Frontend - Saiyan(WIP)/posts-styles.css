@@ -157,16 +157,28 @@ button[onclick^="deletePost"]:hover {
   margin-bottom: 15px;
 }
 
-/* shows a question mark/help cursor */
-.timestamp {
-    cursor: help; 
+/* this is timeStamp hover effect for the posts*/
+.timeStamp {
+  cursor: help; 
     display: inline-block;
 }
 
 /* changes color on hover */
+.timeStamp:hover {
+  color: #007bff; 
+  text-decoration: underline;
+}
+
+
+/* timestamps hovers below are for the comments */
+.timestamp {
+  position: relative;
+  cursor: pointer;
+}
+
 .timestamp:hover {
-    color: #007bff; 
-    text-decoration: underline;
+  color: #007bff; /* Changes color slightly on hover */
+  text-decoration: underline;
 }
 
 /* Reset */
