@@ -31,6 +31,21 @@ function savePosts() {
     localStorage.setItem("posts", JSON.stringify(posts));
 }
 
+/* toggles the overlay model to show */
+function toggleModel(show) {
+    const model = document.getElementById("postModel");
+    model.style.display = show ? "block" : "none";
+}
+
+/* if model is on screen it can be interacted with */
+window.onclick = function(event) {
+    const model = document.getElementById("postModel");
+    if (event.target == modal) {
+        model.style.display = "none";
+    }
+}
+
+
 // render new post after creation
 function renderPosts() {
     const feed = document.getElementById("feed");
@@ -79,7 +94,7 @@ function renderPosts() {
                 <i onclick="toggleLike(this, ${realIndex})" class="fa fa-thumbs-up" style="cursor: pointer; color: ${hasLiked ? 'blue' : 'black'}"> </i>
                 <span id="like-count-${realIndex}">${post.likedBy ? post.likedBy.length : 0} </span>
             </div>
-            <div class="chat-wrapper">
+            <div class="comment-wrapper">
                 <div id="comments-${realIndex}">${commentsHTML}</div>
                 <input type="text" id="input-${realIndex}" placeholder="Write a comment...">
                 <button onclick="addComment(${realIndex})">Comment</button>
@@ -89,6 +104,7 @@ function renderPosts() {
         feed.appendChild(div);
     });
 }
+
 
 // create new post function
 function addPost() {
