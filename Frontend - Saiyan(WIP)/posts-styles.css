@@ -218,7 +218,6 @@ button[onclick^="deletePost"]:hover {
 
 /* below is code to changed/removed depending if it is needed in the final version */
 /* it was used to get a feeling of what the page should look like */
-/* is needed for now for various stylings show on the page, will need to fine tune this more throughly soon */
 
 /* Reset */
 * {
@@ -249,11 +248,6 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* Headings */
-h2 {
-  margin-bottom: 20px;
-  text-align: center;
-}
 
 /* Form */
 form {
@@ -290,42 +284,6 @@ button:hover {
   background: #2e59d9;
 }
 
-/* Message */
-#message {
-  margin-top: 15px;
-  text-align: center;
-  min-height: 20px;
-}
-
-/* Table */
-#usersTable {
-  width: 100%;
-  max-width: 800px;
-  border-collapse: collapse;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-#usersTable thead {
-  background: #4e73df;
-  color: #fff;
-}
-
-#usersTable th,
-#usersTable td {
-  padding: 12px;
-  text-align: left;
-}
-
-#usersTable tbody tr:nth-child(even) {
-  background: #f5f7ff;
-}
-
-#usersTable tbody tr:hover {
-  background: #e6ecff;
-}
 
 /* Buttons */
 .toggle-buttons {
@@ -349,15 +307,3 @@ button:hover {
   background: #2e59d9;
 }
 
-/* ===== CHAT WRAPPER ===== */
-.chat-wrapper {
-  flex: 1;                  /* take remaining width */
-  display: flex;
-  flex-direction: column;
-  padding: 30px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  min-height: 0;            /* required for scrolling messages */
-  overflow: hidden;
-}
