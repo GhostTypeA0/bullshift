@@ -40,7 +40,7 @@ function toggleModel(show) {
 /* if model is on screen it can be interacted with */
 window.onclick = function(event) {
     const model = document.getElementById("postModel");
-    if (event.target == modal) {
+    if (event.target == model) {
         model.style.display = "none";
     }
 }
