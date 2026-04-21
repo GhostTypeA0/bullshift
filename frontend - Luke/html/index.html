@@ -7,24 +7,33 @@
     <link rel="stylesheet" href="../styles/index-styles.css" />
   </head>
   <body>
-    <nav class="sidebar">
-      <h2>Bull-Shift</h2>
-
+    <!-- sidebar aside -->
+    <aside class="sidebar">
+      <div id="topContent">\
+        <!-- temp logo -->
+        <img id="topLogo" src="../assets/logo.svg">
+        <h2>Bull-Shift</h2>
+      </div>
       <!-- header title -->
-      <aside id="loggedin-user">placeholder@bshift</aside>
+      <hr />
+      <div id="loggedin-user">placeholder@bshift</div>
+      <hr />
 
       <!-- chat/posts togglers -->
-      <button id="chatBtn" class="button chatBtn">Chat</button>
-      <button id="postsBtn" class="button postsBtn">Posts</button>
+      <div id="buttDiv">
+        <button id="chatBtn" class="button chatBtn">Chat</button>
+        <button id="postsBtn" class="button postsBtn">Posts</button>
+      </div>
 
       <!-- logout button -->
-      <button type="button" id="logoutButton">Logout</button>
-      <br>
-    </nav>
+      <div id="buttDiv2">
+        <button type="button" id="logoutButton">Logout</button>
+      </div>
+      <br />
+    </aside>
     <!-- center of the page -->
     <main class="content">
-      <div id="pages-container">
-      </div>
+      <div id="pages-container"></div>
     </main>
     <script src="../scripts/index-script.js"></script>
   </body>

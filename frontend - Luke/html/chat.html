@@ -23,14 +23,18 @@ Author: Luke Callahan
         <!-- text input area -->
         <div id="inputRow">
           <input type="file" id="imageInput" accept="image/*" hidden />
-          <button id="imageButton">+</button>
+          <button id="imageButton">
+            <img src="../assets/upload.svg" alt="+" id="uploadButton">
+          </button>
           <input
             type="text"
             id="messageInput"
             placeholder="message..."
             disabled
           />
-          <button id="sendButton" disabled>Send</button>
+          <button id="sendButton" disabled>
+            <img src="../assets/send.svg" alt="+" id="sendButtonIco">
+          </button>
         </div>
       </div>
 
