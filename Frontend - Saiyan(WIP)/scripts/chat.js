@@ -84,14 +84,18 @@ function createMessageElement(messageUsername, text, timestamp, image) {
     timestampSpan.className = "timestamp";
     timestampSpan.textContent = `[${timestamp}]\u00A0`;
   
-
-/* updates time stamp hover show the date of when the message was sent */  
-const sentTime = "2026-04-20T10:00:00Z"; 
-const fullDate = new Date(sentTime); 
-
-const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-timestampSpan.title = `[ ${fullDate.toLocaleString(undefined, options)} ]`;
-
+    /* formatted date for the hover effect */
+    const fullDate = new Date(); 
+    const options = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    };
+    
+  timestampSpan.title = `[ ${fullDate.toLocaleString(undefined, options)} ]`;
 
   // gen user element
   const usernameSpan = document.createElement("span");
