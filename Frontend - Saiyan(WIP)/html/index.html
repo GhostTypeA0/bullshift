@@ -1,0 +1,64 @@
+<!--
+Assignment: Bull-Shift App | Login/User Creation - HTML
+Author: Luke Callahan, Saiyan Ren
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bull-Shift</title>
+    <link rel="stylesheet" href="../styles/index-styles.css" />
+  </head>
+  <body>
+    <!-- sidebar aside -->
+    <aside class="sidebar">
+      <div id="topContent">\
+        <!-- temp logo -->
+        <img id="topLogo" src="../assets/logo.svg">
+        <h2>Bull-Shift</h2>
+      </div>
+      <!-- header title -->
+      <hr />
+      <div id="loggedin-user">placeholder@bshift</div>
+      <hr />
+
+      <!-- chat/posts togglers -->
+      <div id="buttDiv">
+        <button id="chatBtn" class="button chatBtn">Chat</button>
+        <button id="postsBtn" class="button postsBtn">Posts</button>
+      </div>
+
+
+      <!-- side user list panel -->
+      <aside>
+        <input type="text" id="friendSearch" placeholder="Find Friends">
+
+
+        <button id="sendRequest" >Add friend</button>
+        <button id="getRequest">Requests</button>
+        
+        <div id="no-friends"></div>
+
+      </aside>
+
+<!--THIS IS THE FRIEND REQUEST LIST-->
+<div class="requestBox hidden"></div>
+
+      
+    </div>
+
+      <!-- logout button -->
+      <div id="buttDiv2">
+        <button type="button" id="logoutButton">Logout</button>
+      </div>
+      <br />
+    </aside>
+    <!-- center of the page -->
+    <main class="content">
+      <div id="pages-container"></div>
+    </main>
+    <script src="../scripts/index-script.js"></script>
+  </body>
+</html>

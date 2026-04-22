@@ -1,0 +1,213 @@
+/* 
+Assignment: Bull-Shift App | Login Page - Stylesheet
+Author: Luke Callahan
+*/
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(0, 0, 0, 0);
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 158, 8);
+  border-radius: 10px;
+}
+
+/* Layout */
+body {
+  min-height: 100vh;
+  color: rgb(255, 255, 255);
+  background: rgb(22, 22, 22);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: row;
+  height: 900px;
+  width: 50%;
+  padding: 50px;
+  background: rgb(15, 15, 15);
+  border: 1px solid rgb(44, 44, 44);
+  border-radius: 10px;
+}
+
+.page-content {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: rgb(22, 22, 22);
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
+  overflow: hidden;
+}
+
+/* Card */
+.container {
+  width: 400px;
+  padding: 30px;
+  margin: auto 0;
+  background: rgb(22, 22, 22);
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
+}
+
+/* Divider */
+.divider {
+  width: 1px;
+  background: rgb(44, 44, 44);
+  align-self: stretch;
+  margin-left: 30px;
+}
+
+/* Right Panel */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+  text-align: center;
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  filter: invert(100%);
+}
+
+.right-panel h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+}
+
+.tagline {
+  font-size: 1.1rem;
+  color: rgb(150, 150, 150);
+}
+
+/* Headings */
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Inputs & Button */
+input,
+button {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid rgb(44, 44, 44);
+  background: rgb(0, 0, 0, 0);
+  color: rgb(255, 255, 255);
+}
+
+input:focus {
+  outline: none;
+  border-color: rgb(0, 158, 8);
+}
+
+/* Password input with checkbox overlay */
+.password-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.password-wrapper input[type="checkbox"] {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('../assets/hide.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: invert(100%);
+}
+
+.password-wrapper input[type="checkbox"]:checked {
+  background-image: url('../assets/show.svg');
+}
+
+/* Button */
+button {
+  border: 1px solid rgb(44, 44, 44);
+  background: rgb(0, 158, 8);
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background: rgb(0, 128, 6);
+}
+
+/* Message */
+#message {
+  margin-top: 15px;
+  text-align: center;
+  min-height: 20px;
+}
+
+/* Buttons */
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggle-buttons button {
+  padding: 10px 15px;
+  border-radius: 6px;
+  background: rgb(0, 158, 8);
+  border: 1px solid rgb(44, 44, 44);
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.toggle-buttons button:hover {
+  background: rgb(0, 128, 6);
+}
