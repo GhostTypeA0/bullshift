@@ -37,9 +37,9 @@ createForm.addEventListener("submit", function (e) {
   }
 
   // push new user into lS via JSON
-  const users = JSON.parse(sessionStorage.getItem("users")) || [];
+  const users = JSON.parse(localStorage.getItem("users")) || [];
   users.push({ username, email: email || null, password });
-  sessionStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("users", JSON.stringify(users));
 
   // validate user creation
   message.style.color = "green";
@@ -57,7 +57,7 @@ loginForm.addEventListener("submit", function (e) {
   const message = document.getElementById("loginMessage");
 
   // find and use user + pass from lS
-  const users = JSON.parse(sessionStorage.getItem("users")) || [];
+  const users = JSON.parse(localStorage.getItem("users")) || [];
   const user = users.find(
     (u) => u.username === username && u.password === password,
   );
@@ -68,7 +68,7 @@ loginForm.addEventListener("submit", function (e) {
     message.textContent = `Login successful! Welcome, ${user.username}.`;
 
     // 1. store current user in lS
-    sessionStorage.setItem("currentUser", JSON.stringify(user));
+    localStorage.setItem("currentUser", JSON.stringify(user));
 
     // 2. auto navigate to chat (can be changed when adding other features)
     setTimeout(() => {
@@ -84,7 +84,7 @@ loginForm.addEventListener("submit", function (e) {
 
 // --- Render Users Table ---
 function renderUsers() {
-  const users = JSON.parse(sessionStorage.getItem("users")) || [];
+  const users = JSON.parse(localStorage.getItem("users")) || [];
   const tbody = document.querySelector("#usersTable tbody");
   tbody.innerHTML = "";
 

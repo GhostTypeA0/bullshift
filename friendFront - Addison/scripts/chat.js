@@ -1,5 +1,5 @@
 // Assignment: Bull-Shift App | Chatbox Script v.8 (I think) - JS
-// Author: Luke Callahan
+// Author: Luke Callahan, Addison Solberg
 
 
 // Section 1: DOM elements & global variables
@@ -22,7 +22,7 @@ let activeChat = null;
 
 // Section 2: Auth Check
 // logged in user check
-const currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
 // if no user, go back to login page, else, update page elements
 if (!currentUser) {
@@ -152,14 +152,16 @@ async function sendMessage() {
 // Section 7: Save & load messages
 // save messages function
 function saveMessage(username, text, image, timestamp) {
-  const chatKey = getChatKey(username, activeChat);
-  const messages = JSON.parse(sessionStorage.getItem(chatKey)) || [];
+  const chatKey = activeChat.startsWith("group_")
+  ? activeChat
+  : getChatKey(username, activeChat);
+  const messages = JSON.parse(localStorage.getItem(chatKey)) || [];
 
   // push message to lS
   messages.push({ username, text, image, timestamp });
 
   // save key to lS
-  sessionStorage.setItem(chatKey, JSON.stringify(messages));
+  localStorage.setItem(chatKey, JSON.stringify(messages));
 }
 
 // load messages function
@@ -169,8 +171,10 @@ function loadMessages() {
   // pull message from lS
   if (!activeChat) return;
 
-  const chatKey = getChatKey(username, activeChat);
-  const savedMessages = JSON.parse(sessionStorage.getItem(chatKey)) || [];
+  const chatKey = activeChat.startsWith("group_")
+  ? activeChat
+  : getChatKey(username, activeChat);
+  const savedMessages = JSON.parse(localStorage.getItem(chatKey)) || [];
 
   // create elements for each pull
   savedMessages.forEach((msg) => {
@@ -194,7 +198,10 @@ function loadMessages() {
 
 
 //ARRAY FOR COMPARING USERS
-let users = JSON.parse(sessionStorage.getItem("users")) || [];
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+
+
 
 
 //FRIEND REQUEST POPUP - brief
@@ -256,7 +263,7 @@ function declineRequest(user) {
   refreshUsers();
   const current = users.find(u => u.username === username);
   current.friendRequestsArray = current.friendRequestsArray.filter(u => u!== user);
-  sessionStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("users", JSON.stringify(users));
   renderRequests();
 }
 
@@ -281,7 +288,7 @@ function acceptRequest(user) {
 
   //DELETES REQUEST FROM LIST
   current.friendRequestsArray = current.friendRequestsArray.filter(u => u!== user);
-  sessionStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("users", JSON.stringify(users));
   renderRequests();
   friendUsers();
 }//accept friend request function end
@@ -292,7 +299,7 @@ function acceptRequest(user) {
 //REFRESH FUNCTION
 //--------------------------------------------------------------------------------------
 function refreshUsers() {
-  users = JSON.parse(sessionStorage.getItem("users")) || [];
+  users = JSON.parse(localStorage.getItem("users")) || [];
 }
 
 
@@ -346,12 +353,134 @@ function requestSend(sentUser) {
         friendRequestNotif(username);
     }
   });
-sessionStorage.setItem("users", JSON.stringify(users));
+localStorage.setItem("users", JSON.stringify(users));
 }
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//THIS IS WHERE GROUPCHAT STUFF CAN BE MADE
+//--------------------------------------------------------------------------------------
+const chatGroup = document.getElementById("chatGroup");
+const groupBox = document.querySelector(".groupBox");
+
+
+chatGroup.addEventListener("click", () => {
+  groupBox.classList.toggle("visible");
+  groupBox.classList.toggle("hidden");
+
+  //UPDATE THE POPUP
+  renderChats();
+});
+
+
+function renderChats() {
+  refreshUsers();
+
+  const container = document.querySelector(".groupBox");
+  
+  //PULLS USER OBJECTS
+  const currentFriends = users.find(u => u.username === username);
+
+  //IF NO FRIENDS, THEN THIS IS DISPLAYED
+  if (!currentFriends || !currentFriends.friends || currentFriends.friends.length === 0) {
+    container.innerHTML = "No friends yet";
+    return;
+  }
+
+
+
+
+  //WHERE FRIENDS ARE LISTED IN BOX
+  container.innerHTML = currentFriends.friends
+    .map(friend => `<button class="groupFriendsCSS">${friend}</button>`)
+    .join("") + `<button id="createGroup" class="createGroupBtn">Create Group</button>`;
+
+  const buttons = document.querySelectorAll(".groupFriendsCSS");
+
+  buttons.forEach(usr => {
+    usr.addEventListener("click", () => {
+      usr.classList.toggle("selected");
+    });
+  });
+
+
+
+
+
+  //THIS IS WHERE THE GROUPCHATS ARE OFFICIALLY MADE
+  const createGroup = document.getElementById("createGroup");
+
+  createGroup.addEventListener("click", () => {
+
+    const selected = document.querySelectorAll(".groupFriendsCSS.selected");
+
+    if (selected.length >= 2) {
+      postGroup(selected);
+    } else {
+      alert("A group needs 2 or more people");
+    }
+
+}); //FUNCTION BUTTON CLICK END
+
+}//FULL FUNCTION END
+
+
+
+
+
+
+
+function postGroup(selectedUsers) {
+  const members = Array.from(selectedUsers).map(usr => usr.textContent);
+
+  members.push(username);
+
+  const groupKey = "group_" + members.sort().join("_");
+
+
+
+  if (!localStorage.getItem(groupKey)) {
+    localStorage.setItem(groupKey, JSON.stringify([]));
+  }
+
+  refreshUsers();
+
+
+  members.forEach(memberName => {
+    const user = users.find(u => u.username === memberName);
+
+    if (!user.groups) user.groups = [];
+    if (!user.groups.includes(groupKey)) {
+      user.groups.push(groupKey);
+    }
+  });
+
+  localStorage.setItem("users", JSON.stringify(users));
+
+  
+  activeChat = groupKey;
+
+  loadMessages();
+  friendUsers();
+}
 
 
 
@@ -375,7 +504,6 @@ function friendUsers() {
   refreshUsers(); // this needs to change to work in middle tier
   userListDiv.innerHTML = "";
 
-
   const current = users.find(u => u.username === username);
 
   const otherUsers = current && Array.isArray(current.friends)
@@ -384,12 +512,10 @@ function friendUsers() {
     )
   : [];
 
-
-
   //ALTER THIS SO IT ONLY SHOWS FRIENDED USERS
   //---------------------------------------------------------------------------------------
   // no users? :(
-  if (otherUsers.length === 0) {
+  if (otherUsers.length === 0 && (!current.groups || current.groups.length === 0)) {
     const empty = document.createElement("p");
     empty.textContent = "No Friends Added.";
     empty.className = "no-friends";
@@ -403,9 +529,6 @@ function friendUsers() {
     userItem.className = "user-item";
     userItem.textContent = user.username;
  //---------------------------------------------------------------------------------------
-
-
-
 
     userItem.addEventListener("click", () => {
       activeChat = user.username;
@@ -423,15 +546,58 @@ function friendUsers() {
 
     userListDiv.appendChild(userItem);
   });
+
+  // yes users? :D (GROUPS)
+  if (current.groups && current.groups.length > 0) {
+    current.groups.forEach((group) => {
+      const groupItem = document.createElement("div");
+      groupItem.className = "user-item";
+      groupItem.textContent = group
+        .replace("group_", "")
+        .split("_")
+        .join(" & ");
+
+      groupItem.addEventListener("click", () => {
+        activeChat = group;
+
+        document
+          .querySelectorAll(".user-item")
+          .forEach((el) => el.classList.remove("active"));
+        groupItem.classList.add("active");
+
+        input.placeholder = `message ${group}@bshift...`;
+
+        // calls message loader
+        loadMessages();
+      });
+
+      userListDiv.appendChild(groupItem);
+    });
+  }
 }
 
   
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Section 9: Event handlers
 // logout
 logoutButton.addEventListener("click", () => {
-  sessionStorage.removeItem("currentUser");
+  localStorage.removeItem("currentUser");
   window.location.href = "../messages/login.html";
 });
 
@@ -534,6 +700,8 @@ new Notification(`${username}: `, {
 });
   }
 }//FUNCTION END
+
+
 
 
 
