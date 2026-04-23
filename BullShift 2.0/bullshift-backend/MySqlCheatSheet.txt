@@ -1,0 +1,151 @@
+========================================================
+  DATABASE + SCHEMA INFO
+========================================================
+
+-- Show current database
+SELECT DATABASE();
+
+-- List all databases
+SHOW DATABASES;
+
+-- Switch database
+USE bullshift;
+
+-- List all tables
+SHOW TABLES;
+
+
+========================================================
+  TABLE STRUCTURE (COLUMNS, TYPES, DEFAULTS)
+========================================================
+
+-- Describe a table (columns + types + defaults)
+DESCRIBE users;
+DESCRIBE posts;
+DESCRIBE messages;
+
+-- More detailed info
+SHOW FULL COLUMNS FROM users;
+SHOW FULL COLUMNS FROM posts;
+SHOW FULL COLUMNS FROM messages;
+
+
+========================================================
+  VIEWING DATA
+========================================================
+
+-- View all rows
+SELECT * FROM users;
+SELECT * FROM posts;
+SELECT * FROM messages;
+
+-- View first 20 rows
+SELECT * FROM posts LIMIT 20;
+
+-- Count rows
+SELECT COUNT(*) FROM users;
+SELECT COUNT(*) FROM posts;
+SELECT COUNT(*) FROM messages;
+
+
+========================================================
+  PRIMARY KEYS / FOREIGN KEYS
+========================================================
+
+-- Show primary key
+SHOW KEYS FROM users WHERE Key_name = 'PRIMARY';
+
+-- Show foreign keys
+SELECT 
+    TABLE_NAME,
+    COLUMN_NAME,
+    CONSTRAINT_NAME,
+    REFERENCED_TABLE_NAME,
+    REFERENCED_COLUMN_NAME
+FROM information_schema.KEY_COLUMN_USAGE
+WHERE TABLE_SCHEMA = DATABASE()
+  AND TABLE_NAME = 'messages'
+  AND REFERENCED_TABLE_NAME IS NOT NULL;
+
+
+========================================================
+  AUTO-INCREMENT (SEQUENCES)
+========================================================
+
+-- Show auto-increment value
+SHOW TABLE STATUS LIKE 'users';
+SHOW TABLE STATUS LIKE 'posts';
+SHOW TABLE STATUS LIKE 'messages';
+
+-- Reset auto-increment counter
+ALTER TABLE users AUTO_INCREMENT = 1;
+ALTER TABLE posts AUTO_INCREMENT = 1;
+ALTER TABLE messages AUTO_INCREMENT = 1;
+
+
+========================================================
+  TABLE MAINTENANCE
+========================================================
+
+-- Delete all rows
+DELETE FROM users;
+DELETE FROM posts;
+DELETE FROM messages;
+
+-- Delete + reset auto-increment
+TRUNCATE TABLE users;
+TRUNCATE TABLE posts;
+TRUNCATE TABLE messages;
+
+-- Drop a table
+DROP TABLE posts;
+
+-- Drop if exists
+DROP TABLE IF EXISTS messages;
+
+
+========================================================
+  QUERYING / FILTERING
+========================================================
+
+-- Basic filtering
+SELECT * FROM users WHERE username = 'john';
+
+-- Posts by a specific user
+SELECT * FROM posts WHERE username = 'john';
+
+-- Messages between two users
+SELECT * FROM messages
+WHERE (sender = 'john' AND receiver = 'luke')
+   OR (sender = 'luke' AND receiver = 'john')
+ORDER BY timestamp;
+
+-- Partial match
+SELECT * FROM posts WHERE caption LIKE '%shift%';
+
+-- Sort newest first
+SELECT * FROM posts ORDER BY id DESC;
+
+-- Limit + sort
+SELECT * FROM messages ORDER BY id DESC LIMIT 10;
+
+
+========================================================
+  DEBUGGING HELP
+========================================================
+
+-- Show all constraints
+SELECT * FROM information_schema.table_constraints
+WHERE table_schema = DATABASE();
+
+-- Show all indexes
+SHOW INDEX FROM users;
+SHOW INDEX FROM posts;
+SHOW INDEX FROM messages;
+
+-- Show active DB connections (MySQL 8+)
+SHOW PROCESSLIST;
+
+========================================================
+  END OF CHEAT SHEET
+========================================================

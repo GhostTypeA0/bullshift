@@ -1,0 +1,58 @@
+<!--
+Assignment: Bull-Shift App | Posts - HTML
+Authors: Luke Callahan, Saiyan Ren
+Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>BullShift Posts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Posts stylesheet -->
+    <link rel="stylesheet" href="/stylesheets/posts-styles.css" />
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <!-- CREATE NEW POST BUTTON -->
+    <div class="container">
+        <button id="openPostModal" onclick="toggleModel(true)">Create New Post</button>
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div id="postModal" class="model">
+        <div class="model-content">
+            <span class="close" onclick="toggleModel(false)">&times;</span>
+
+            <form id="createpost">
+                <h2>Create A Post</h2>
+
+                <!-- Image upload -->
+                <input type="file" id="imageInput" accept="image/*" />
+
+                <!-- Preview -->
+                <img id="imagePreview" class="image-preview" alt="Preview" style="display:none;" />
+
+                <!-- Caption -->
+                <textarea id="caption" placeholder="Write a caption..."></textarea>
+
+                <!-- Submit -->
+                <button type="submit" id="postButton">Post</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FEED -->
+    <div id="feed" class="feed"></div>
+
+    <!-- Posts logic -->
+    <script src="/scripts/posts.js"></script>
+</body>
+</html>

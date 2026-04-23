@@ -1,0 +1,310 @@
+Backend (Java/Spring)
+New Files:
+
+model/Post.java - Post entity with image, caption, likes, timestamps
+repository/PostRepository.java - JPA repository with like increment/decrement queries
+controller/PostController.java - Full CRUD endpoints for posts + like/unlike
+Updated Files:
+
+model/User.java - Added email and password fields
+controller/UserController.java - Added /register endpoint, password validation, duplicate username check
+Frontend
+New Files:
+
+posts.html - Posts feed page
+posts.js - API-based post operations (create, like, comment, delete)
+posts.css - Post styling
+Updated Files:
+
+http.js - Added UserAPI, PostAPI, MessageAPI wrappers
+users.js - Updated with register/login toggle, proper API calls
+login.html - Added register button, email field
+index.html - Added navigation to posts page
+chat.js - Uses API instead of localStorage for user list
+global.css - Added navigation styles
+API Endpoints
+Method	Endpoint	Description
+POST	/api/users/register	Register new user
+POST	/api/users/login	Login with username/password
+GET	/api/posts	Get all posts
+POST	/api/posts	Create post
+DELETE	/api/posts/{id}	Delete post
+POST	/api/posts/{id}/like	Like post
+POST	/api/posts/{id}/unlike	Unlike post
+Run mvn spring-boot:run and access:
+
+http://localhost:8081/ - Login
+http://localhost:8081/index.html - Chat
+http://localhost:8081/posts.html - Posts
+
+BullShift – Merge Notes (Updated)
+Backend (Java/Spring)
+New Files
+model/Post.java
+
+Post entity
+
+Stores username, image (base64), caption, likeCount
+
+Auto timestamps (createdAt, updatedAt)
+
+repository/PostRepository.java
+
+JPA repo for posts
+
+Includes atomic like/unlike update queries
+
+controller/PostController.java
+
+Full CRUD for posts
+
+Endpoints for create, delete, like, unlike
+
+Returns posts sorted newest → oldest
+
+Updated Files
+model/User.java
+
+Added email + password fields
+
+Username is unique
+
+Supports full registration flow
+
+controller/UserController.java
+
+Added /register endpoint
+
+Duplicate username check
+
+Basic password validation
+
+Clean JSON responses for login/register
+
+Frontend
+New Files
+posts.html
+
+New posts feed page
+
+Displays all posts in reverse chronological order
+
+posts.js
+
+Handles create post
+
+Handles like/unlike
+
+Handles delete
+
+Loads posts from backend
+
+Renders posts dynamically
+
+posts.css
+
+Styling for post cards
+
+Layout for feed
+
+Like button styles
+
+Image formatting
+
+Updated Files
+http.js
+
+Added API wrappers: UserAPI, PostAPI, MessageAPI
+
+Centralizes all fetch calls
+
+users.js
+
+Updated login/register toggle
+
+Calls new /register endpoint
+
+Handles username/email/password fields
+
+login.html
+
+Added register button
+
+Added email field
+
+Cleaned layout
+
+index.html
+
+Added navigation to posts page
+
+Cleaned UI
+
+chat.js
+
+No more localStorage user list
+
+Now loads users from backend
+
+Messaging uses real API + WebSocket
+
+global.css
+
+Added navigation bar styles
+
+Unified fonts, spacing, layout
+
+========================================================
+  BULLSHIFT DEPLOYMENT CHEAT SHEET (EC2 + S3 + DOMAIN)
+========================================================
+
+This is the full checklist for getting BullShift live so we can
+log in from two different computers and chat/post in real time.
+
+========================================================
+  1. EC2 BACKEND DEPLOYMENT (SPRING BOOT)
+========================================================
+
+-- Create EC2 instance
+- Region: us-east-2 (or whatever we pick)
+- AMI: Amazon Linux 2023 or Ubuntu 22.04
+- Instance: t2.micro (free tier)
+- Open ports:
+    22 (SSH)
+    80 (HTTP)
+    443 (HTTPS)
+    8080 (Spring Boot)
+- Attach security group with these rules
+
+-- SSH into EC2
+ssh -i key.pem ec2-user@<EC2-IP>
+
+-- Install Java + Git
+sudo dnf install java-17-amazon-corretto git -y
+
+-- Clone backend repo
+git clone https://github.com/GhostTypeA0/bullshift.git
+
+-- Build backend
+cd bullshift/bullshift_backend
+./mvnw clean package
+
+-- Run backend (test)
+java -jar target/bullshift_backend-0.0.1-SNAPSHOT.jar
+
+-- Backend should now be reachable at:
+http://<EC2-IP>:8080/api/users/login
+
+========================================================
+  2. NGINX REVERSE PROXY (FOR CLEAN URL + HTTPS)
+========================================================
+
+-- Install nginx
+sudo dnf install nginx -y
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+-- Edit nginx config
+sudo nano /etc/nginx/nginx.conf
+
+-- Add reverse proxy block:
+server {
+    listen 80;
+    server_name <your-domain>;
+
+    location / {
+        proxy_pass http://localhost:8080;
+    }
+}
+
+-- Test + reload
+sudo nginx -t
+sudo systemctl restart nginx
+
+========================================================
+  3. FRONTEND DEPLOYMENT (S3 + CLOUDFRONT)
+========================================================
+
+-- Create S3 bucket
+- Name: bullshift-frontend
+- Enable static website hosting
+- Upload:
+    index.html
+    login.html
+    posts.html
+    chat.html
+    js/
+    css/
+    images/
+
+-- Make bucket public (static hosting requires it)
+
+-- Create CloudFront distribution
+- Origin: S3 bucket
+- Default root object: index.html
+- Enable HTTPS
+
+-- CloudFront URL becomes our frontend URL
+
+========================================================
+  4. CONNECT FRONTEND → BACKEND
+========================================================
+
+-- Update API URLs in http.js:
+const BASE_URL = "https://<your-domain>/api";
+
+-- Update WebSocket URL in chat.js:
+const socket = new SockJS("https://<your-domain>/ws");
+
+-- Re-upload frontend files to S3
+
+========================================================
+  5. DOMAIN SETUP (ROUTE 53 OR NAMECHEAP)
+========================================================
+
+-- Buy domain (Namecheap or Route 53)
+
+-- Create A record:
+@ → CloudFront distribution
+
+-- Create CNAME for www:
+www → CloudFront distribution
+
+-- Wait for DNS to propagate (5–30 min)
+
+========================================================
+  6. FINAL TEST (CLASSROOM)
+========================================================
+
+-- Two computers
+-- Two different accounts
+-- Both open:
+https://<your-domain>/
+
+-- Test:
+1. Register + login
+2. Create posts
+3. Like/unlike
+4. Send messages
+5. Real-time chat works across machines
+
+========================================================
+  7. OPTIONAL (PRODUCTION HARDENING)
+========================================================
+
+-- Run backend as a service:
+sudo nano /etc/systemd/system/bullshift.service
+
+[Service]
+User=ec2-user
+ExecStart=/usr/bin/java -jar /home/ec2-user/bullshift_backend.jar
+Restart=always
+
+-- Start service:
+sudo systemctl daemon-reload
+sudo systemctl start bullshift
+sudo systemctl enable bullshift
+
+========================================================
+  END OF DEPLOYMENT CHEAT SHEET
+========================================================
