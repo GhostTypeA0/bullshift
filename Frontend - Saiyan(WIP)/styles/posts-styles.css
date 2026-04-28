@@ -1,9 +1,8 @@
 /*
-Assignment: Bull-Shift App | Body Styling - CSS
-Author: Luke Callahan
-styling with comments were added by Saiyan Ren
-*/
-
+Assignment: Bull-Shift App | Post Styling - CSS
+Author: Luke Callahan, Saiyan Ren
+Merged styles
+/*
 
 /* ===== RESET ===== */
 * {
@@ -13,26 +12,94 @@ styling with comments were added by Saiyan Ren
   font-family: Arial, sans-serif;
 }
 
+/* ===== SCROLL BAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(0,0,0,0);
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 158, 8);
+  border-radius: 10px;
+}
+
+
+/* ===== BODY ===== */
 body {
   min-height: 100vh;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #121212; 
-  color: #e0e0e0;      
+  background: rgb(22, 22, 22);
 }
 
-/* container and post styling */
-.container, .post {
+/* ===== POST CREATOR ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+/* DIV FOR INPUTS */
+#mediaInput {
+  display: flex;
+  flex-direction: row;
+  gap: 10%;
+}
+
+#caption {
+  font-size: 15;
+  resize: none;
+  color: rgb(255,255,255);
+  background: rgb(0,0,0,0);
+  border: none;
+  padding-top: 15px;
+}
+
+/* Compact image button */
+#imageButton {
+  padding: 0 14px;
+  min-width: 50px;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#uploadButton {
+  filter: invert(100%);
+  transform: scale(1.5);
+}
+
+.container {
   width: 100%;
-  max-width: 500px;
-  background: #1e1e1e; 
-  padding: 20px;
-  margin-bottom: 20px;
+  max-width: 400px;
+  padding: 30px;
+  margin-bottom: 5%;
+  background: rgb(15, 15, 15);
+  border: 1px solid rgb(44,44,44);
+  color: rgb(255,255,255);
   border-radius: 10px;
-  border: 1px solid #333;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+
+/* ===== POSTS ===== */
+.post {
+  display: flex;
+  flex-direction: column;
+  background: rgb(15,15,15);
+  color: rgb(255,255,255);
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
 }
 
 h2 {
@@ -41,13 +108,18 @@ h2 {
   color: #ffffff;
 }
 
-/* image post styling */
 img, .post img {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 8px;
-  opacity: 0.9; 
+  border-radius: 10px;
+}
+
+.post textarea {
+  padding: 12px;
+  font-size: 14px;
+  transition: 0.2s ease;
+  background: rgb(0,0,0,0);
+  border: rgb(22,22,22);
+  color: rgb(255,255,255);
 }
 
 /* text elements  */
@@ -67,56 +139,32 @@ textarea:focus, input:focus {
   border-color: #4e73df;
 }
 
-/* post button in overlay */
 button {
-  margin-top: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 6px;
-  background: #4e73df;
-  color: #ffffff;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: bold;
+  color: #fff;
   cursor: pointer;
-  transition: background 0.2s ease;
+  padding: 5px 20px;
+  background: rgb(22,22,22);
+  border: 1px solid rgb(44,44,44);
+  transition: 0.2s ease;
+  align-items: center;
 }
 
 button:hover {
-  background: #2e59d9;
+  background: rgb(0, 158, 8);
 }
 
-/* button stylying regarding posts */
-.comment-wrapper button {
-  background-color: #0a8a06;
-}
-
-.comment-wrapper button:hover {
-  background-color: #088004;
-}
-
-button[onclick^="deleteComment"] {
-  background-color: #0a8a06;
-}
-
-button[onclick^="deleteComment"]:hover {
-  background-color: #088004;
-}
-
-button[onclick^="deletePost"] {
-  background-color: #3f3f3f;
-}
-
-button[onclick^="deletePost"]:hover {
-  background-color: #555555;
-}
-
-/* like button icon */
+/* like container styling */
 #like-container {
+  padding: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 10px;
-  font-size: 1.2rem;
+  font-size: 1em;
 }
+
 
 .fa-thumbs-up {
   color: #bbb;
@@ -124,7 +172,7 @@ button[onclick^="deletePost"]:hover {
 }
 
 .fa-thumbs-up:hover {
-  color: #4e73df;
+  color: rgb(0, 158, 8);
   cursor: pointer;
 }
 
@@ -142,6 +190,20 @@ button[onclick^="deletePost"]:hover {
   color: #ccc;
 }
 
+/* like button Hover */
+.fa-thumbs-up:hover {
+  filter: invert(100%);
+  transition: .2s;
+  cursor: pointer; 
+}
+
+
+/* delete button Hover */
+button[onclick^="deletePost"]:hover {
+  background-color: rgb(182, 0, 0);
+  cursor: pointer;
+}
+
 /* TimeStamp are posts and timestamp are comments stylings */
 .timeStamp, .timestamp {
   cursor: help;
@@ -153,6 +215,7 @@ button[onclick^="deletePost"]:hover {
 .timeStamp:hover, .timestamp:hover {
   color: #bbb;
 }
+
 
 /* model overlay */
 .model {
@@ -188,5 +251,3 @@ button[onclick^="deletePost"]:hover {
 .close:hover {
   color: white;
 }
-
-
