@@ -307,3 +307,83 @@ aside {
 .dcBtn:hover {
   background-color: rgb(100, 0, 0);
 }
+
+
+/* friends list section */
+#friends-list-container {
+  width: 208px;
+  background: rgb(22, 22, 22);
+  padding: 15px;
+  margin: 0.5%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: auto;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* styles title of friends list */
+#friends-list-container h3 {
+  margin: 0 0 5px 0;
+  color: white;
+  font-size: 16px;
+}
+
+/* horizontal styling */
+#friends-list-container hr {
+  border: 0;
+  border-top: 1px solid rgb(44, 44, 44);
+  margin: 5px 0;
+}
+
+/* flexible section for individual friend list */
+#friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; 
+}
+
+/* styling for individual friend names */
+.friend-name {
+  padding: 12px;
+  background-color: rgb(15, 15, 15);
+  border: 1px solid rgb(44, 44, 44);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.friend-name:hover {
+  background: rgb(39, 39, 39);
+}
+
+/* styling for remove/unfriend button */
+.remove-btn {
+  background-color: rgb(30, 30, 30); 
+  color: #f1f1f1; 
+  border: 1px solid rgb(44, 44, 44); 
+  padding: 6px 12px;
+  border-radius: 10px; 
+  cursor: pointer;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  transition: 0.2s ease;
+}
+
+.remove-btn:hover {
+  background-color: rgb(134, 0, 0); 
+  color: white;
+  border-color: #ff4d4d;
+}
+
+.remove-btn:focus {
+  outline: 2px solid rgb(80, 80, 80); 
+}
