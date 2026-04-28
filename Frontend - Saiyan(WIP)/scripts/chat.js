@@ -79,23 +79,24 @@ function createMessageElement(messageUsername, text, timestamp, image) {
     messageDiv.classList.add("received"); // styled in grey
   }
 
-  // gen timestamp element
-    const timestampSpan = document.createElement("span");
-    timestampSpan.className = "timestamp";
-    timestampSpan.textContent = `[${timestamp}]\u00A0`;
-  
-    /* formatted date for the hover effect */
-    const fullDate = new Date(); 
-    const options = { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    };
-    
-  timestampSpan.title = `[ ${fullDate.toLocaleString(undefined, options)} ]`;
+// gen timestamp element 
+const timestampSpan = document.createElement("span"); 
+timestampSpan.className = "timestamp"; 
+timestampSpan.textContent = `[${timestamp}]\u00A0`; 
+
+/* uses the existing timestamp to ensure the hover matches the time the message was sent */ 
+const messageDate = new Date(timestamp); 
+const options = 
+{ weekday: 'long', 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric', 
+  hour: '2-digit', 
+  minute: '2-digit' 
+}; 
+
+/* formatted date */
+timestampSpan.title = `[ ${messageDate.toLocaleString(undefined, options)} ]`;
 
   // gen user element
   const usernameSpan = document.createElement("span");
