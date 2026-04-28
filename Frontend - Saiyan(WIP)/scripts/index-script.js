@@ -161,9 +161,9 @@ function renderRequests() {
       .join("<br>");
 
       //SEND OFF TO ACCEPT AND DECLINE FUNCTIONS
-  current.friendRequestsArray.forEach(user => {
-const declineBtn = document.getElementById("dc" + user);
-const acceptBtn = document.getElementById("ac" + user);
+    current.friendRequestsArray.forEach(user => {
+    const declineBtn = document.getElementById("dc" + user);
+    const acceptBtn = document.getElementById("ac" + user);
 
       declineBtn.addEventListener("click", () => {
         declineRequest(user);
@@ -270,25 +270,108 @@ localStorage.setItem("users", JSON.stringify(users));
 }
 
 
-// THIS UPDATES THE CHAT LIST WITH YOUR FRIENDS
+
+// updates the friends list
 function friendUsers() {
-  refreshUsers(); // this needs to change to work in middle tier
-  userListDiv.innerHTML = "";
+    const friendsListDiv = document.getElementById('friends-list');
+    if (!friendsListDiv) return;
+
+    const allUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const session = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!session || !session.username) {
+        friendsListDiv.innerHTML = '<p>Please log in.</p>';
+        return;
+    }
+
+    const userName = allUsers.find(u => u.username === session.username);
+    friendsListDiv.innerHTML = '';
+
+    if (userName && userName.friends && userName.friends.length > 0) {
+        userName.friends.forEach(friendUsername => {
+            const friendData = allUsers.find(u => u.username === friendUsername);
+            if (friendData) {
+                const friendName = document.createElement('div');
+                friendName.className = 'friend-name';
+
+                // creates the name element for the friend list
+                const nameList = document.createElement('p');
+                nameList.innerHTML = `<strong>${friendData.username}</strong>`;
+
+                // creates the remove/unfriend button
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'unfriend';
+                removeBtn.className = 'remove-btn';
+                
+                // event for remove/unfriending 
+                removeBtn.addEventListener('click', function() {
+                    executeRemoval(friendData.username);
+                });
+
+                friendName.appendChild(nameList);
+                friendName.appendChild(removeBtn);
+                friendsListDiv.appendChild(friendName);
+            }
+        });
+    } else {
+        friendsListDiv.innerHTML = '<p class="no-friends">No friends added yet.</p>';
+    }
+}
+
+  document.addEventListener('DOMContentLoaded', friendUsers);
 
 
-  const current = users.find(u => u.username === username);
+// remove/unfriend logic
+function executeRemoval(usernameToRemove) {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const session = JSON.parse(localStorage.getItem("currentUser"));
 
-  const otherUsers = current && Array.isArray(current.friends)
+    if (!session) return;
 
-  ? users.filter((u) =>
+    // searches index for user
+    const myIndex = users.findIndex(u => u.username === session.username);
+    const theirIndex = users.findIndex(u => u.username === usernameToRemove);
 
-  current.friends.includes(u.username) && u.username !== username
+        // removes from friends list from both users
+    if (myIndex !== -1 && theirIndex !== -1) {
+        users[myIndex].friends = users[myIndex].friends.filter(name => name !== usernameToRemove);
+        users[theirIndex].friends = users[theirIndex].friends.filter(name => name !== session.username);
 
-)
+        // updates local storage
+        localStorage.setItem('users', JSON.stringify(users));
+        friendUsers();
+    }
+}
 
-: [];
+  // starts up the list of friends
+  document.addEventListener('DOMContentLoaded', friendUsers);
 
 
+// friend management adding/updating friend list/logic 
+function addFriend(usernameToAdd) {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const currentUserObj = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!currentUserObj || currentUserObj.username === usernameToAdd) return;
+
+    const userMe = users.find(u => u.username === currentUserObj.username);
+    const userThem = users.find(u => u.username === usernameToAdd);
+
+    if (userMe && userThem) {
+        if (!userMe.friends) userMe.friends = [];
+        if (!userThem.friends) userThem.friends = [];
+
+        if (!userMe.friends.includes(usernameToAdd)) {
+            userMe.friends.push(usernameToAdd);
+            userThem.friends.push(userMe.username);
+            localStorage.setItem('users', JSON.stringify(users));
+            friendUsers();
+        }
+    }
+
+
+  // initial load
+  document.addEventListener('DOMContentLoaded', friendUsers);
 
   //ALTER THIS SO IT ONLY SHOWS FRIENDED USERS
   //---------------------------------------------------------------------------------------
@@ -382,14 +465,6 @@ imageInput.addEventListener("change", () => {
 
 
 
-
-
-
-
-
-
-
-
 //NOTIFICATIONS SECTION
 //---------------------------------------------------------------------------------------
 //FRIEND REQUESTS
@@ -412,9 +487,6 @@ new Notification("Incoming friend Request!", {
   }
 
 }//FUNCTION END
-
-
-
 
 
 
