@@ -109,10 +109,43 @@ function renderPosts() {
     });
 }
 
+/* image compression */
+function compressImage(file, maxWidth = 800, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                /* sets the dimensions */
+                let width = img.width;
+                let height = img.height;
 
-// create new post function
-function addPost() {
-/* checks if user is logged in and redirects to login page if the user is not login */ 
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                /* draws to canvas */
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                /* exports to base64 with lower quality */
+                const compressedBase64 = canvas.toDataURL(file.type, quality);
+                resolve(compressedBase64);
+            };
+            img.onerror = reject;
+        };
+        reader.onerror = reject;
+    });
+}
+
+    // create new post function
+    async function addPost() { /* prevents posts from freezing/locking up */
     const currentUser = getCurrentUsername();
     if (!currentUser) {
         alert("You must be logged in to post.");
@@ -129,27 +162,38 @@ function addPost() {
         return;
     }
 
-    /* pushes post with the following info */  
-    const reader = new FileReader();
-    reader.onload = function (e) {
+    try {
+        /* shows loading state if needed */
+        console.log("Compressing image...");
+
+        /* compression: resizes to 800px width at 80% quality */
+        const compressedImage = await compressImage(file, 800, 0.8);
+
         posts.push({
-            image: e.target.result,
+            image: compressedImage, /* using compressed base64 */
             caption: caption,
             timestamp: new Date().getTime(),
             likedBy: [],
             comments: [],
-            username: currentUser 
+            username: currentUser
         });
+
         savePosts();
         renderPosts();
+        
+        /* clear inputs */
         fileInput.value = "";
         document.getElementById("caption").value = "";
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+        console.error("Error compressing image:", error);
+        alert("Failed to process image.");
+    }
 }
+    reader.readAsDataURL(file);
+
 
 /* logouts and returns to login.html */
-window.logoutUser = function() {
+    window.logoutUser = function() {
     console.log("Logout successful");
     localStorage.removeItem("currentUser");
     alert("You have been logged out.");
