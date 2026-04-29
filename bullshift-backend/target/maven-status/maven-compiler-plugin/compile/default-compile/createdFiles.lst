@@ -1,0 +1,6 @@
+com\bullshift\bullshift_backend\model\Message.class
+com\bullshift\bullshift_backend\controller\MessageController.class
+com\bullshift\bullshift_backend\model\User.class
+com\bullshift\bullshift_backend\BullshiftBackendApplication.class
+com\bullshift\bullshift_backend\repository\MessageRepository.class
+com\bullshift\bullshift_backend\repository\UserRepository.class
