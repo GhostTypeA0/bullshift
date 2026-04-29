@@ -1,0 +1,65 @@
+<!--
+Assignment: Bull-Shift App | Messages - HTML
+Authors: Luke Callahan, Saiyan Ren
+Unified + Cleanup: John R. Nottom IV, Addison S
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>BullShift Messenger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/stylesheets/chat-style.css" />
+</head>
+
+<body>
+    <div class="main-container">
+
+        <!-- CHAT AREA -->
+        <div class="chat-wrapper">
+
+            <!-- Chat partner -->
+            <div id="chat-partner">@bshift</div>
+
+            <!-- Messages -->
+            <div id="messages"></div>
+
+            <!-- Image preview -->
+            <div id="imagePreviewContainer" class="preview-container"></div>
+
+            <!-- Input row -->
+            <div id="inputRow">
+                <input type="file" id="imageInput" accept="image/*" hidden />
+
+                <button id="imageButton">
+                    <img src="/assets/upload.svg" alt="Upload" id="uploadButton">
+                </button>
+
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="message..."
+                    disabled
+                />
+
+                <button id="sendButton" disabled>
+                    <img src="/assets/send.svg" alt="Send" id="sendButtonIco">
+                </button>
+            </div>
+        </div>
+
+        <!-- USER LIST -->
+        <aside id="user-list"></aside>
+
+    </div>
+
+    <!-- WebSocket libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <!-- Chat logic -->
+    <script src="/scripts/chat.js"></script>
+</body>
+</html>
