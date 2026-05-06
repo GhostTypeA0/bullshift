@@ -1,129 +1,129 @@
 // Assignment: Bull-Shift App | Index Script - JS
 // Author: Luke Callahan, Saiyan Ren, Addison 
-
+/* Author of this comment style: Saiyan Ren */
 
 // Section 1: DOM elements & global variables
-// DOM elements
-const btnChat = document.getElementById("chatBtn");
-const btnPosts = document.getElementById("postsBtn");
-const container = document.getElementById("pages-container");
+const btnChat = document.getElementById('chatBtn');
+const btnPosts = document.getElementById('postsBtn');
+const container = document.getElementById('pages-container');
+const loggedInDiv = document.getElementById('loggedin-user');
+const logoutButton = document.getElementById('logoutButton');
 
-// --------pulled & edited from chat.js----------
-const loggedInDiv = document.getElementById("loggedin-user");
-
-// global variables
+// Global variables
 let chatActive = false;
 let postsActive = false;
 let chatFrame = null;
 let postsFrame = null;
+let username = "";
 
-
-// now everything is saved so it doesn't reload everything on startup
+/* saves current page state by user */
 function saveIframeState() {
-  localStorage.setItem("iframeState", JSON.stringify({
-    chatActive,
-    postsActive
-  }));
+  if (!username) return;
+  /* uses a unique key for each user */
+  localStorage.setItem(`iframeState_${username}`, JSON.stringify({ chatActive, postsActive }));
 }
 
-// and will reload from lS
 function loadIframeState() {
-  const saved = localStorage.getItem("iframeState");
-  if (saved) {
+    if (!username) return;
+    const saved = localStorage.getItem(`iframeState_${username}`);
+    if (saved) {
     const state = JSON.parse(saved);
     chatActive = state.chatActive;
     postsActive = state.postsActive;
-    btnChat.classList.toggle("active", chatActive);
-    btnPosts.classList.toggle("active", postsActive);
-  }
+        
+      /* updates button visual states */
+      if (btnChat) btnChat.classList.toggle('active', chatActive);
+      if (btnPosts) btnPosts.classList.toggle('active', postsActive);
+    }
 }
 
-// --------pulled & edited from chat.js----------
-let username = "";
-
-// --------pulled & edited from chat.js----------
 // Section 2: Auth Check
 // logged in user check
-const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-// if no user, go back to login page, else, update page elements
+/* if no user, go back to login page, else, update page elements */
 if (!currentUser) {
-  window.location.href = "login.html";
+    window.location.href = 'login.html';
 } else {
-  username = currentUser.username;
-  loggedInDiv.textContent = username;
-  loadIframeState();
-  if (chatActive || postsActive) {
-    updateLayout();
-  }
+    username = currentUser.username;
+    loggedInDiv.textContent = username;
+    
+    /* loads this specific user's last saved state layout  */
+    loadIframeState();
+    
+    if (chatActive || postsActive) {
+        updateLayout();
+    }
 }
 
 // Section 3: iFrames
-// iframes are created ONCE now
 function createIframes() {
-  chatFrame = document.createElement("iframe");
-  chatFrame.src = "../html/chat.html";
-  chatFrame.className = "page-frame";
-  chatFrame.id = "chat-frame";
+  // Note: To return to the same chat partner, your chat.html 
+  // should also save its state to localStorage scoped by user.
+  chatFrame = document.createElement('iframe');
+  chatFrame.src = `../html/chat.html`; 
+  chatFrame.className = 'page-frame';
+  chatFrame.id = 'chat-frame';
 
-  postsFrame = document.createElement("iframe");
-  postsFrame.src = "../html/posts.html";
-  postsFrame.className = "page-frame";
-  postsFrame.id = "posts-frame";
+  postsFrame = document.createElement('iframe');
+  postsFrame.src = `../html/posts.html`;
+  postsFrame.className = 'page-frame';
+  postsFrame.id = 'posts-frame';
 
   container.appendChild(chatFrame);
   container.appendChild(postsFrame);
 }
 
-// and only their visibility changes rather than a full reload
 function updateLayout() {
   if (!chatFrame && !postsFrame) {
-    createIframes();
-  }
+       createIframes();
+    }
 
   if (chatActive && postsActive) {
-    container.className = "two-pages";
-    chatFrame.style.display = "";
-    postsFrame.style.display = "";
-  } else if (chatActive) {
-    container.className = "single-page";
-    chatFrame.style.display = "";
-    postsFrame.style.display = "none";
-  } else if (postsActive) {
-    container.className = "single-page";
-    chatFrame.style.display = "none";
-    postsFrame.style.display = "";
-  } else {
-    container.className = "";
-    container.innerHTML = "";
-    chatFrame = null;
-    postsFrame = null;
-  }
+    container.className = 'two-pages';
+    chatFrame.style.display = 'block';
+    postsFrame.style.display = 'block';
+    } else if (chatActive) {
+      container.className = 'single-page';
+      chatFrame.style.display = 'block';
+      postsFrame.style.display = 'none';
+    } else if (postsActive) {
+      container.className = 'single-page';
+      chatFrame.style.display = 'none';
+      postsFrame.style.display = 'block';
+    } else {
+      container.className = '';
+      container.innerHTML = ''; // Clears frames if neither is active
+      chatFrame = null;
+      postsFrame = null;
+    }
 }
 
 // Section 4: Event Handlers
 // logout
 // --------pulled & edited from chat.js----------
-logoutButton.addEventListener("click", () => {
-  localStorage.removeItem("currentUser");
-  localStorage.removeItem("iframeState");
-  window.location.href = "login.html";
-});
+if (logoutButton) {
+    logoutButton.addEventListener('click', () => {
+    // Remove only the login session; do NOT clear user-specific iframeState
+    localStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
+    });
+}
 
 // chat
-btnChat.addEventListener("click", () => {
-  chatActive = !chatActive;
-  btnChat.classList.toggle("active", chatActive);
-  saveIframeState();
-  updateLayout();
+btnChat.addEventListener('click', () => {
+    chatActive = !chatActive;
+    btnChat.classList.toggle('active', chatActive);
+    saveIframeState();
+    updateLayout();
 });
 
 // posts
-btnPosts.addEventListener("click", () => {
-  postsActive = !postsActive;
-  btnPosts.classList.toggle("active", postsActive);
-  saveIframeState();
-  updateLayout();
+btnPosts.addEventListener('click', () => {
+    postsActive = !postsActive;
+    btnPosts.classList.toggle('active', postsActive);
+    saveIframeState();
+    updateLayout();
 });
 
 
@@ -139,6 +139,7 @@ const getRequest = document.getElementById("getRequest");
 const requestBox = document.querySelector(".requestBox");
 const sendRequest = document.getElementById("sendRequest");
 
+
 getRequest.addEventListener("click", () =>{
   requestBox.classList.toggle("visible");
   requestBox.classList.toggle("hidden");
@@ -151,71 +152,90 @@ getRequest.addEventListener("click", () =>{
 //THIS RENDERS THE FRIEND REQUESTS
 //--------------------------------------------------------------------------------------
 function renderRequests() {
-  refreshUsers();
-  const current = users.find(u => u.username === username);
+    refreshUsers();
+    const current = users.find(u => u.username === username);
+    if (!current) return;
 
-  if (current && current.friendRequestsArray && current.friendRequestsArray.length > 0) {
-    requestBox.innerHTML = "FRIEND REQUEST<br>" + 
-    current.friendRequestsArray.map(user => user + " wants to be your friend!" + 
-      "<button id='ac" + user + "' class='acBtn'>Accept?</button> " + "<button id='dc" + user + "' class='dcBtn'>Decline?</button>")
-      .join("<br>");
+    let html = "FRIEND REQUESTS<br>";
 
-      //SEND OFF TO ACCEPT AND DECLINE FUNCTIONS
-    current.friendRequestsArray.forEach(user => {
-    const declineBtn = document.getElementById("dc" + user);
-    const acceptBtn = document.getElementById("ac" + user);
+    // --- INCOMING REQUESTS ---
+    if (current.friendRequestsArray && current.friendRequestsArray.length > 0) {
+        html += current.friendRequestsArray.map(user => 
+            user + " wants to be your friend! " + 
+            "<button id='ac" + user + "' class='acBtn'>Accept?</button> " + 
+            "<button id='dc" + user + "' class='dcBtn'>Decline?</button>"
+        ).join("<br>");
+    } else {
+        html += "No Friend Requests Yet<br>";
+    }
 
-      declineBtn.addEventListener("click", () => {
-        declineRequest(user);
-      });
+    // --- SENT REQUESTS ---
+    html += "<br>SENT REQUESTS<br>";
+    if (current.sentRequestsArray && current.sentRequestsArray.length > 0) {
+        html += current.sentRequestsArray.map(user => 
+            "Waiting for " + user + " to respond..."
+        ).join("<br>");
+    } else {
+        html += "No Sent Requests";
+    }
 
-      acceptBtn.addEventListener("click", () => {
-        acceptRequest(user);
-      });
-  });
-  }
-  else {
-    requestBox.innerHTML = "FRIEND REQUEST<br>" + "No Friend Requests Yet";
-  }
+    requestBox.innerHTML = html;
 
+    // --- EVENT LISTENERS ---
+    if (current.friendRequestsArray) {
+        current.friendRequestsArray.forEach(user => {
+            document.getElementById("dc" + user)?.addEventListener("click", () => declineRequest(user));
+            document.getElementById("ac" + user)?.addEventListener("click", () => acceptRequest(user));
+        });
+    }
+}
 
-
-}//FUNCTION END
+//FUNCTION END
 
 
 //DECLINE FRIEND REQUEST
 //--------------------------------------------------------------------------------------
 function declineRequest(user) {
-  refreshUsers();
-  const current = users.find(u => u.username === username);
-  current.friendRequestsArray = current.friendRequestsArray.filter(u => u!== user);
-  localStorage.setItem("users", JSON.stringify(users));
-  renderRequests();
+    refreshUsers();
+    const current = users.find(u => u.username === username);
+    const sender = users.find(u => u.username === user);
+
+    current.friendRequestsArray = current.friendRequestsArray.filter(u => u !== user);
+    
+    // Clean up the sender's sent list so it doesn't stay there forever
+    if (sender.sentRequestsArray) {
+        sender.sentRequestsArray = sender.sentRequestsArray.filter(u => u !== username);
+    }
+
+    localStorage.setItem("users", JSON.stringify(users));
+    renderRequests();
 }
 
 
 //ACCEPT FRIEND REQUEST
 //--------------------------------------------------------------------------------------
 function acceptRequest(user) {
-  //DECLARATIONS HERE
-  refreshUsers();
-  const current = users.find(u => u.username === username);
-  const sendUser = users.find(u => u.username === user);
+    refreshUsers();
+    const current = users.find(u => u.username === username);
+    const sender = users.find(u => u.username === user);
 
-  
-  //THIS ADDS THE FRIENDS TO BOTH USERS ACCOUNTS. IT PREVENTS FROM ADDING IF THE FRIEND IS ALREADY THERE.
-  if (!current.friends) current.friends = [];
-  if (!sendUser.friends) sendUser.friends = [];
-  if (!current.friends.includes(user)) current.friends.push(user);
-  if (!sendUser.friends.includes(username)) sendUser.friends.push(username);
+    if (!current.friends) current.friends = [];
+    if (!sender.friends) sender.friends = [];
 
+    if (!current.friends.includes(user)) current.friends.push(user);
+    if (!sender.friends.includes(username)) sender.friends.push(username);
 
-  //DELETES REQUEST FROM LIST
-  current.friendRequestsArray = current.friendRequestsArray.filter(u => u!== user);
-  localStorage.setItem("users", JSON.stringify(users));
-  renderRequests();
-  friendUsers();
-}//accept friend request function end
+    // Clean up both arrays
+    current.friendRequestsArray = current.friendRequestsArray.filter(u => u !== user);
+    if (sender.sentRequestsArray) {
+        sender.sentRequestsArray = sender.sentRequestsArray.filter(u => u !== username);
+    }
+
+    localStorage.setItem("users", JSON.stringify(users));
+    renderRequests();
+    friendUsers();
+}
+//accept friend request function end
 
 
 //REFRESH FUNCTION
@@ -227,51 +247,71 @@ function refreshUsers() {
 
 //THIS IS THE SEARCH BAR FOR SENDING A FRIEND REQUEST
 //--------------------------------------------------------------------------------------
-sendRequest.addEventListener("click",() => {
-const friendSearch = document.getElementById("friendSearch");
-const friendValue = friendSearch.value;
-let found = false;
-let sentUser = "";
-  users.forEach((u) => {
-    if (u.username === friendValue) {
-        found = true;
-    }
-  });
+sendRequest.addEventListener("click", () => {
+    const friendSearch = document.getElementById("friendSearch");
+    
+    /*  sets the character limit of the username in the friend search bar */
+    friendSearch.maxLength = 30; 
+
+    const friendValue = friendSearch.value.trim();
+    let found = false;
+    let sentUser = "";
+
+    /*  checks for character length before searching */
+    if (friendValue.length > 30) {
+        friendSearch.value = "";
+        friendSearch.placeholder = "Limit: 30 chars";
+        friendSearch.classList.add("error");
+    } else {
+        users.forEach((u) => {
+            if (u.username === friendValue) {
+                found = true;
+            }
+        });
+
         if (found) {
-  sentUser = friendSearch.value;
-  friendSearch.value = "";
-  friendSearch.placeholder = "Friend Request Sent";
-  //THIS IS WHERE THE REQUEST IS SENT. THE VALUE IS GRABBED AND SENT TO THE FUNCTION.
-  requestSend(sentUser)
-} else {
-  friendSearch.value = "";
-  friendSearch.placeholder = "User does not exist";
-}
-setTimeout(() => {
-  friendSearch.placeholder = "Find Friends";
-}, 1000);
+            sentUser = friendValue;
+            friendSearch.value = "";
+            friendSearch.placeholder = "Friend Request Sent";
+            requestSend(sentUser);
+        } else {
+            friendSearch.value = "";
+            friendSearch.placeholder = "User does not exist";
+            friendSearch.classList.add("error"); /* error red text */
+        }
+    }
+
+    setTimeout(() => {
+        friendSearch.placeholder = "Find Friends";
+        friendSearch.classList.remove("error");
+    }, 1000);
 }); //function end
 
 
 //THIS IS WHERE FRIEND REQUEST LOGIC GOES THROUGH
 //--------------------------------------------------------------------------------------
 function requestSend(sentUser) {
-  users.forEach((u) => {
-    if (u.username === sentUser) {
-      if (!u.friendRequestsArray) {
-        u.friendRequestsArray = [];
-      }
-        u.friendRequestsArray.push(username);
-
-        friendRequestNotif(username);
-    }
-  });
-localStorage.setItem("users", JSON.stringify(users));
+    const current = users.find(u => u.username === username);
+    
+    users.forEach((u) => {
+        if (u.username === sentUser) {
+            /* adds to their incoming requests **/
+            if (!u.friendRequestsArray) u.friendRequestsArray = [];
+            if (!u.friendRequestsArray.includes(username)) u.friendRequestsArray.push(username);
+            
+            /* adds to your outgoing requests */
+            if (!current.sentRequestsArray) current.sentRequestsArray = [];
+            if (!current.sentRequestsArray.includes(sentUser)) current.sentRequestsArray.push(sentUser);
+            
+            friendRequestNotif(username);
+        }
+    });
+    localStorage.setItem("users", JSON.stringify(users));
+    renderRequests(); /* refreshes the UI to show the sent request */
 }
 
 
-
-// updates the friends list
+/* updates the friends list with requested on outcoming users */
 function friendUsers() {
     const friendsListDiv = document.getElementById('friends-list');
     if (!friendsListDiv) return;
@@ -294,16 +334,27 @@ function friendUsers() {
                 const friendName = document.createElement('div');
                 friendName.className = 'friend-name';
 
-                // creates the name element for the friend list
+                friendName.style.display = 'flex';
+                friendName.style.justifyContent = 'space-between';
+                friendName.style.alignItems = 'center';
+                friendName.style.marginBottom = '8px';
+                friendName.style.wordBreak = 'break-word'; /* makes sure long usernames break cleanly */
+                friendName.style.gap = '10px';
+
+                /* creates the name element for the friend list */
                 const nameList = document.createElement('p');
+                nameList.style.margin = '0';
+                nameList.style.flex = '1'; /* occupies up available space */
+                nameList.style.overflowWrap = 'break-word'; /* username wrapping */
                 nameList.innerHTML = `<strong>${friendData.username}</strong>`;
 
-                // creates the remove/unfriend button
+                /* creates the remove/unfriend button */
                 const removeBtn = document.createElement('button');
                 removeBtn.textContent = 'unfriend';
                 removeBtn.className = 'remove-btn';
+                removeBtn.style.flexShrink = '0';
                 
-                // event for remove/unfriending 
+                /* event for remove/unfriending */
                 removeBtn.addEventListener('click', function() {
                     executeRemoval(friendData.username);
                 });
@@ -321,33 +372,33 @@ function friendUsers() {
   document.addEventListener('DOMContentLoaded', friendUsers);
 
 
-// remove/unfriend logic
+/* remove/unfriend logic */
 function executeRemoval(usernameToRemove) {
     let users = JSON.parse(localStorage.getItem('users')) || [];
     const session = JSON.parse(localStorage.getItem("currentUser"));
 
     if (!session) return;
 
-    // searches index for user
+    /* searches index for user by username */
     const myIndex = users.findIndex(u => u.username === session.username);
     const theirIndex = users.findIndex(u => u.username === usernameToRemove);
 
-        // removes from friends list from both users
+    /* removes both users for each others friend's list */
     if (myIndex !== -1 && theirIndex !== -1) {
         users[myIndex].friends = users[myIndex].friends.filter(name => name !== usernameToRemove);
         users[theirIndex].friends = users[theirIndex].friends.filter(name => name !== session.username);
 
-        // updates local storage
+        /* updates local storage */
         localStorage.setItem('users', JSON.stringify(users));
         friendUsers();
     }
 }
 
-  // starts up the list of friends
+  /* starts up the list of friends */
   document.addEventListener('DOMContentLoaded', friendUsers);
 
 
-// friend management adding/updating friend list/logic 
+/* friend management adding/updating friend list/logic */ 
 function addFriend(usernameToAdd) {
     let users = JSON.parse(localStorage.getItem('users')) || [];
     const currentUserObj = JSON.parse(localStorage.getItem("currentUser"));
@@ -357,6 +408,7 @@ function addFriend(usernameToAdd) {
     const userMe = users.find(u => u.username === currentUserObj.username);
     const userThem = users.find(u => u.username === usernameToAdd);
 
+    /* checks if users are friends with each other, adds both users to each others friend's list */
     if (userMe && userThem) {
         if (!userMe.friends) userMe.friends = [];
         if (!userThem.friends) userThem.friends = [];
@@ -390,8 +442,6 @@ function addFriend(usernameToAdd) {
     userItem.className = "user-item";
     userItem.textContent = user.username;
  //---------------------------------------------------------------------------------------
-
-
 
 
     userItem.addEventListener("click", () => {
@@ -436,23 +486,23 @@ imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
   if (!file) return;
 
-  // clear preview
-  imagePreviewContainer.innerHTML = "";
+// clear preview
+imagePreviewContainer.innerHTML = "";
 
-  // create preview
-  const wrapper = document.createElement("div");
-  wrapper.className = "preview-wrapper";
+// create preview
+const wrapper = document.createElement("div");
+wrapper.className = "preview-wrapper";
 
-  const img = document.createElement("img");
-  img.src = URL.createObjectURL(file);
-  img.className = "preview-image";
+const img = document.createElement("img");
+img.src = URL.createObjectURL(file);
+img.className = "preview-image";
 
-  // remove image (in case you don't want to send it)
-  const removeBtn = document.createElement("button");
-  removeBtn.textContent = "✖";
-  removeBtn.className = "remove-preview";
+// remove image (in case you don't want to send it)
+const removeBtn = document.createElement("button");
+removeBtn.textContent = "✖";
+removeBtn.className = "remove-preview";
 
-  removeBtn.addEventListener("click", () => {
+    removeBtn.addEventListener("click", () => {
     imageInput.value = "";
     imagePreviewContainer.innerHTML = "";
   });
@@ -462,7 +512,6 @@ imageInput.addEventListener("change", () => {
   wrapper.appendChild(removeBtn);
   imagePreviewContainer.appendChild(wrapper);
 });
-
 
 
 //NOTIFICATIONS SECTION
@@ -489,7 +538,6 @@ new Notification("Incoming friend Request!", {
 }//FUNCTION END
 
 
-
 //MESSAGES
 //---------------------------------------------------------------------------------------
 function messageNotif(username, message) {
@@ -508,8 +556,6 @@ new Notification(`${username}: `, {
 });
   }
 }//FUNCTION END
-
-
 
 
 friendUsers();
