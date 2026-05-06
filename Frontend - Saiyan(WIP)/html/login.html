@@ -1,6 +1,6 @@
 <!--
 Assignment: Bull-Shift App | Login/User Creation - HTML
-Author: Luke Callahan
+Author: Luke Callahan, Saiyan Ren
 -->
 
 <!doctype html>
@@ -19,23 +19,16 @@ Author: Luke Callahan
           <button id="showLogin">Login</button>
         </div>
 
-        <!-- user creation card -->
+        <!-- user creation card -->  <!-- added maxlength character limit to user creation as well  --> 
         <form id="createForm" style="display: none">
           <h2>Create User</h2>
-          <input type="text" id="username" placeholder="Username" required />
-          <input type="email" id="email" placeholder="Email" />
+          <input type="text" id="username" placeholder="Username" maxlength="20" required />
+          <input type="email" id="email" placeholder="Email" maxlength="50" />
           <div class="password-wrapper">
-            <input
-              type="password"
-              id="password"
-              placeholder="Password"
-              required
-            />
+            <input type="password" id="password" placeholder="Password" maxlength="30" required />
+
             <!-- show password -->
-            <input
-              type="checkbox"
-              onclick="password.type = this.checked ? 'text' : 'password'"
-            />
+            <input type="checkbox" onclick="password.type = this.checked ? 'text' : 'password'" />
           </div>
           <button type="submit">Create User</button>
           <p id="createMessage"></p>
@@ -46,16 +39,9 @@ Author: Luke Callahan
           <h2>User Login</h2>
           <input type="text" id="loginUsername" placeholder="Username" required />
           <div class="password-wrapper">
+            <input type="password" id="loginPassword" placeholder="Password" required />
             <input
-              type="password"
-              id="loginPassword"
-              placeholder="Password"
-              required
-            />
-            <input
-              type="checkbox"
-              onclick="loginPassword.type = this.checked ? 'text' : 'password'"
-            />
+              type="checkbox" onclick="loginPassword.type = this.checked ? 'text' : 'password'" />
           </div>
           <button type="submit">Login</button>
           <p id="loginMessage"></p>
