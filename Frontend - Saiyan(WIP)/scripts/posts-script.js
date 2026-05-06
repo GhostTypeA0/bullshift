@@ -7,6 +7,7 @@
 // Load posts from localStorage or initialize empty array
 let posts = JSON.parse(localStorage.getItem("posts")) || [];
 
+
 /* gets current user logging in */
 function getCurrentUsername() {
     const user = localStorage.getItem("currentUser");
@@ -48,69 +49,59 @@ window.onclick = function(event) {
 
 // render new post after creation
 function renderPosts() {
-    const feed = document.getElementById("feed");
-    feed.innerHTML = "";
-    const currentUser = getCurrentUsername();
+  const feed = document.getElementById("feed");
+  feed.innerHTML = "";
+  const currentUser = getCurrentUsername();
 
-    posts.slice().reverse().forEach((post, displayIndex) => {
-        const realIndex = posts.length - 1 - displayIndex;
-        const div = document.createElement("div");
-        div.className = "post";
+  posts.slice().reverse().forEach((post, displayIndex) => {
+    const realIndex = posts.length - 1 - displayIndex;
+    const div = document.createElement("div");
+    div.className = "post";
 
-        /* date customization and post date */
-        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const postDate = new Date(post.timestamp);
-        
-        /* formatted date and hover */
-        const postFormatted = `[${postDate.toLocaleString()}]`; 
-        const postHoverDate = postDate.toLocaleString(undefined, dateOptions);
+    const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const postDate = new Date(post.timestamp);
+    const postFormatted = `[${postDate.toLocaleString()}]`;
+    const postHoverDate = postDate.toLocaleString(undefined, dateOptions);
 
-        const commentsHTML = (post.comments || []).map((comment, commentIndex) => {
-        const commentDateObj = new Date(comment.date);
-        const commentHoverDate = commentDateObj.toLocaleString(undefined, dateOptions);
-        const canDeleteComment = currentUser && (post.username === currentUser || comment.username === currentUser);
-    
+    const commentsHTML = (post.comments || []).map((comment, commentIndex) => {
+      const commentDateObj = new Date(comment.date);
+      const commentHoverDate = commentDateObj.toLocaleString(undefined, dateOptions);
+      const canDeleteComment = currentUser && (post.username === currentUser || comment.username === currentUser);
+      const formattedCommentDate = commentDateObj.toLocaleString();
 
-        const formattedCommentDate = commentDateObj.toLocaleString(); 
-
-        return `
-            <div class="comment-text">
-            <strong>${comment.username || 'Anonymous'}:</strong> 
-            <span>${comment.text}</span>
-            <small class="timestamp" title="[ ${commentHoverDate} ]" style="color: gray; display: block; font-size: 0.75em; cursor: help;">
-                [${formattedCommentDate}] 
-            </small>
-            ${canDeleteComment ? `<button class="delete-button" style="font-size:0.7em" onclick="deleteComment(${realIndex}, ${commentIndex})">Delete</button>` : ''}
-            </div>
-        `;
+      return `
+        <div class="comment-text">
+          <strong>${comment.username || 'Anonymous'}:</strong> <span>${comment.text}</span>
+          <small class="timestamp" title="[ ${commentHoverDate} ]" style="color: gray; display: block; font-size: 0.75em; cursor: help;"> [${formattedCommentDate}] </small>
+          ${canDeleteComment ? `<button class="delete-button" style="font-size:0.7em" onclick="deleteComment(${realIndex}, ${commentIndex})">Delete</button>` : ''}
+        </div>
+      `;
     }).join('');
 
-        /* creates and returns a new string */ /* timeStamp class will have the hover effect with formatted date */  
-     div.innerHTML = `
-            <div class="post-wrapper">
-                <img src="${post.image}" alt="Post image" style="max-width:100%">
-                <p class="timeStamp" title=" [ ${postHoverDate} ]">
-                    <i>${postFormatted}</i>
-                </p>
-                <p><strong>${post.username || 'Anonymous'}</strong>: ${post.caption}</p>
-            </div>
-            <div id="like-container">
-                <i onclick="toggleLike(this, ${realIndex})" class="fa fa-thumbs-up" style="cursor: pointer; color: ${post.likedBy && post.likedBy.includes(currentUser) ? 'blue' : 'black'}"></i>
-                <span id="like-count-${realIndex}">${post.likedBy ? post.likedBy.length : 0}</span>
-            </div>
-            <div class="comment-wrapper">
-                <div id="comments-${realIndex}">${commentsHTML}</div>
-                <input type="text" id="input-${realIndex}" placeholder="Write a comment...">
-                <button onclick="addComment(${realIndex})">Comment</button>
-            </div>
-            ${(currentUser && post.username === currentUser) ? `<button onclick="deletePost(${realIndex})">Delete Post</button>` : ''}
-        `;
-        feed.appendChild(div);
-    });
+/* innerhtml of the posts. includes multiple features found throughout the app, and character limit of both the post caption and comments */
+    div.innerHTML = `
+      <div class="post-wrapper">
+        <img src="${post.image}" alt="Post image" style="max-width:100%">
+        <p class="timeStamp" title=" [ ${postHoverDate} ]"> <i>${postFormatted}</i> </p>
+        <p><strong>${post.username || 'Anonymous'}</strong>: ${post.caption}</p>
+      </div>
+      <div id="like-container">
+        <i onclick="toggleLike(this, ${realIndex})" class="fa fa-thumbs-up" style="cursor: pointer; color: ${post.likedBy && post.likedBy.includes(currentUser) ? 'blue' : 'black'}"></i>
+        <span id="like-count-${realIndex}">${post.likedBy ? post.likedBy.length : 0}</span>
+      </div>
+      <div class="comment-wrapper">
+        <div id="comments-${realIndex}">${commentsHTML}</div>
+        <input type="text" id="input-${realIndex}" maxlength="500" placeholder="Write a comment (max 500)..." onkeydown="if(event.key === 'Enter') addComment(${realIndex})">
+        <button onclick="addComment(${realIndex})">Comment</button>
+      </div>
+      ${(currentUser && post.username === currentUser) ? `<button onclick="deletePost(${realIndex})">Delete Post</button>` : ''}
+    `;
+    feed.appendChild(div);
+  });
 }
 
 /* image compression */
-function compressImage(file, maxWidth = 800, quality = 0.8) {
+function compressImage(file, maxWidth = 700, quality = 0.8) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -144,8 +135,35 @@ function compressImage(file, maxWidth = 800, quality = 0.8) {
     });
 }
 
-    // create new post function
-    async function addPost() { /* prevents posts from freezing/locking up */
+/* post image preview */
+document.getElementById("imageInput").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("imagePreview");
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            
+            preview.style.display = "block";
+            preview.style.maxWidth = "150px";
+            preview.style.maxHeight = "150px";
+            preview.style.width = "auto";
+            preview.style.height = "auto";
+            
+
+            preview.style.marginLeft = "auto";
+            preview.style.marginRight = "auto";
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+        preview.style.display = "none";
+    }
+});
+
+/* updates your existing addPost to clear the preview after posting */
+async function addPost() {
     const currentUser = getCurrentUsername();
     if (!currentUser) {
         alert("You must be logged in to post.");
@@ -163,14 +181,11 @@ function compressImage(file, maxWidth = 800, quality = 0.8) {
     }
 
     try {
-        /* shows loading state if needed */
         console.log("Compressing image...");
-
-        /* compression: resizes to 800px width at 80% quality */
         const compressedImage = await compressImage(file, 800, 0.8);
 
         posts.push({
-            image: compressedImage, /* using compressed base64 */
+            image: compressedImage,
             caption: caption,
             timestamp: new Date().getTime(),
             likedBy: [],
@@ -180,15 +195,34 @@ function compressImage(file, maxWidth = 800, quality = 0.8) {
 
         savePosts();
         renderPosts();
-        
+
         /* clear inputs */
         fileInput.value = "";
         document.getElementById("caption").value = "";
+        
+        /* clear preview */
+        const preview = document.getElementById("imagePreview");
+        preview.style.display = "none";
+        preview.src = "";
+
+        /* closes the post overlay */
+        const model = document.getElementById("postModel"); 
+        if (model) {
+            model.style.display = "none";
+        }
+
     } catch (error) {
         console.error("Error compressing image:", error);
         alert("Failed to process image.");
     }
 }
+    
+    /* clear inputs and preview */
+    fileInput.value = "";
+    document.getElementById("caption").value = "";
+    document.getElementById("imagePreview").style.display = "none"; 
+    document.getElementById("imagePreview").src = "";
+
     reader.readAsDataURL(file);
 
 
