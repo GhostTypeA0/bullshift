@@ -63,7 +63,7 @@ form {
   padding-top: 15px;
 }
 
-/* Compact image button */
+/* compact image button */
 #imageButton {
   padding: 0 14px;
   min-width: 50px;
@@ -198,7 +198,7 @@ button:hover {
 }
 
 
-/* delete button Hover */
+/* delete button hover */
 button[onclick^="deletePost"]:hover {
   background-color: rgb(182, 0, 0);
   cursor: pointer;
