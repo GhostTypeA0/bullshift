@@ -1,5 +1,5 @@
 // Assignment: Bull-Shift App | Chatbox Script v.8 (I think) - JS
-// Author: Luke Callahan
+// Author: Luke Callahan, Saiyan Ren
 /* Author of this comment style: Saiyan Ren */
 
 
@@ -40,11 +40,11 @@ if (!currentUser) {
 function getTimestamp() {
   const now = new Date();
   return now.toLocaleString([], {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
   });
 }
 
@@ -59,215 +59,189 @@ function toBase64(file) {
   });
 }
 
-// Section 4: Create message element
-// message element gen function
+// --- SECTION 4: Create message element ---
 function createMessageElement(messageUsername, text, timestamp, image) {
-  const messageDiv = document.createElement("div");
-  messageDiv.className = "message";
-  const deleteBtn = document.createElement("button");
+    const messageDiv = document.createElement("div");
+    messageDiv.className = "message";
+    const deleteBtn = document.createElement("button");
 
-  // stylings
-  if (messageUsername === username) {
-    messageDiv.classList.add("sent"); // styled in blue
-    /* below is the unsend/delete button, using textContent it appears as an X */  
+    /* unsend/delete button */
+    if (messageUsername === username) {
+      messageDiv.classList.add("sent");
       deleteBtn.textContent = "✖";
       deleteBtn.className = "unsend-btn";
       deleteBtn.title = "Unsend message";
-      deleteBtn.onclick = () => unsendMessage(timestamp); 
+      deleteBtn.onclick = () => unsendMessage(timestamp);
       messageDiv.appendChild(deleteBtn);
-  } else {
-    messageDiv.classList.add("received"); // styled in grey
-  }
+    } else {
+      messageDiv.classList.add("received");
+    }
 
-// gen timestamp element 
-const timestampSpan = document.createElement("span"); 
-timestampSpan.className = "timestamp"; 
-timestampSpan.textContent = `[${timestamp}]\u00A0`; 
+    const timestampSpan = document.createElement("span");
+    timestampSpan.className = "timestamp";
+    timestampSpan.textContent = `[${timestamp}]\u00A0`;
+    
+    /* shows hover date of when the message was sent */
+    const messageDate = new Date(timestamp);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    timestampSpan.title = `[ ${messageDate.toLocaleString(undefined, options)} ]`;
 
-/* uses the existing timestamp to ensure the hover matches the time the message was sent */ 
-const messageDate = new Date(timestamp); 
-const options = 
-{ weekday: 'long', 
-  year: 'numeric', 
-  month: 'long', 
-  day: 'numeric', 
-  hour: '2-digit', 
-  minute: '2-digit' 
-}; 
+    const usernameSpan = document.createElement("span");
+    usernameSpan.className = "username";
+    usernameSpan.textContent = messageUsername + ":";
 
-/* formatted date */
-timestampSpan.title = `[ ${messageDate.toLocaleString(undefined, options)} ]`;
+    messageDiv.appendChild(timestampSpan);
+    messageDiv.appendChild(usernameSpan);
 
-  // gen user element
-  const usernameSpan = document.createElement("span");
-  usernameSpan.className = "username";
-  usernameSpan.textContent = messageUsername + ":";
+    if (text) {
+      const textSpan = document.createElement("span");
+      textSpan.textContent = text;
+      messageDiv.appendChild(textSpan);
+    }
 
-  messageDiv.appendChild(timestampSpan);
-  messageDiv.appendChild(usernameSpan);
-
-  // gen message element
-  if (text) {
-    const textSpan = document.createElement("span");
-    textSpan.textContent = text;
-    messageDiv.appendChild(textSpan);
-  }
-
-  // gen img element
-  if (image) {
-    const img = document.createElement("img");
-    img.src = image;
-    img.className = "chat-image";
-    img.style.maxWidth = "200px";
-    img.style.display = "block";
-    img.style.marginTop = "5px";
-    messageDiv.appendChild(img);
-  }
-
-  return messageDiv;
+    if (image) {
+      const img = document.createElement("img");
+      img.src = image;
+      img.className = "chat-image";
+      img.style.maxWidth = "200px";
+      img.style.display = "block";
+      img.style.marginTop = "5px";
+      messageDiv.appendChild(img);
+    }
+    return messageDiv;
 }
 
+/* unsend message confirmation */
 function unsendMessage(timestamp) {
-    if (!confirm("Are you sure you want to unsend this message?")) return;
-
-    const chatKey = getChatKey(username, activeChat);
-    let messages = JSON.parse(localStorage.getItem(chatKey)) || [];
-
-    // Filter out the message with the matching timestamp
-    messages = messages.filter(msg => msg.timestamp !== timestamp);
-
-    // Save the updated list back to localStorage
-    localStorage.setItem(chatKey, JSON.stringify(messages));
-
-    // Refresh the chat UI
-    loadMessages();
+  if (!confirm("Are you sure you want to unsend this message?")) return;
+  const chatKey = getChatKey(username, activeChat);
+  let messages = JSON.parse(localStorage.getItem(chatKey)) || [];
+  messages = messages.filter(msg => msg.timestamp !== timestamp);
+  localStorage.setItem(chatKey, JSON.stringify(messages));
+  loadMessages();
 }
 
-// Section 5: ChatKey generator
+// --- SECTION 5: ChatKey generator ---
 function getChatKey(userA, userB) {
   return "messages_" + [userA, userB].sort().join("_");
 }
 
-// Section 6: Message sender
+// --- SECTION 6: Message sender ---
 async function sendMessage() {
-  if (!activeChat) {
-    alert("Select a user to chat with first."); // self explanitory I think
-    return;
-  }
+    if (!activeChat) {
+      alert("Select a user to chat with first.");
+      return;
+    }
 
-  // message/input values/files
-  const text = input.value.trim(); // prevents empty message
-  const file = imageInput.files[0]; // access selected file
+    /* enforces 500 character limit on the logic side for messages */
+    const rawText = input.value.trim();
+    const text = rawText.substring(0, 500); 
+    
+    const file = imageInput.files[0];
+    if (!text && !file) return;
 
-  if (!text && !file) return;
+    const timestamp = getTimestamp();
+    let imageData = null;
+    if (file) {
+        imageData = await toBase64(file);
+    }
 
-  // gen timestamp for message
-  const timestamp = getTimestamp();
-  let imageData = null;
-
-  if (file) {
-    imageData = await toBase64(file); // base64 converter
-  }
-
-  // gen message
-  const messageElement = createMessageElement(
-    username,
-    text,
-    timestamp,
-    imageData
-  );
-
-  // sned message
-  messagesDiv.appendChild(messageElement);
-  saveMessage(username, text, imageData, timestamp);
-
-  // resets
-  input.value = "";
-  imageInput.value = "";
-  imagePreviewContainer.innerHTML = "";
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-// Section 7: Save & load messages
-// save messages function
-function saveMessage(username, text, image, timestamp) {
-  const chatKey = getChatKey(username, activeChat);
-  const messages = JSON.parse(localStorage.getItem(chatKey)) || [];
-
-  // push message to lS
-  messages.push({ username, text, image, timestamp });
-
-  // save key to lS
-  localStorage.setItem(chatKey, JSON.stringify(messages));
-}
-
-// load messages function
-function loadMessages() {
-  messagesDiv.innerHTML = "";
-
-  // pull message from lS
-  if (!activeChat) return;
-
-  const chatKey = getChatKey(username, activeChat);
-  const savedMessages = JSON.parse(localStorage.getItem(chatKey)) || [];
-
-  // create elements for each pull
-  savedMessages.forEach((msg) => {
     const messageElement = createMessageElement(
-      msg.username,
-      msg.text,
-      msg.timestamp,
-      msg.image
+      username,
+      text,
+      timestamp,
+      imageData
     );
-    messagesDiv.appendChild(messageElement);
-  });
 
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    messagesDiv.appendChild(messageElement);
+    saveMessage(username, text, imageData, timestamp);
+
+    // resets
+    input.value = "";
+    imageInput.value = "";
+    imagePreviewContainer.innerHTML = "";
+    if (typeof updateCharCount === "function") updateCharCount(); // resets character counter
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// Section 8: User list (aside element)
-// render user-list
+// --- SECTION 7: Save & load messages ---
+function saveMessage(username, text, image, timestamp) {
+    const chatKey = getChatKey(username, activeChat);
+    const messages = JSON.parse(localStorage.getItem(chatKey)) || [];
+    messages.push({ username, text, image, timestamp });
+    localStorage.setItem(chatKey, JSON.stringify(messages));
+}
+
+function loadMessages() {
+    messagesDiv.innerHTML = "";
+    if (!activeChat) return;
+    const chatKey = getChatKey(username, activeChat);
+    const savedMessages = JSON.parse(localStorage.getItem(chatKey)) || [];
+    savedMessages.forEach((msg) => {
+        const messageElement = createMessageElement(
+          msg.username,
+          msg.text,
+          msg.timestamp,
+          msg.image
+        );
+        messagesDiv.appendChild(messageElement);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// --- SECTION 8: User list (aside element) ---
 function renderUserList() {
-  const users = JSON.parse(localStorage.getItem("users")) || []; // this needs to change to work in middle tier
-  userListDiv.innerHTML = "";
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    userListDiv.innerHTML = "";
+    let otherUsers = users.filter((u) => u.username !== username);
 
-  const otherUsers = users.filter((u) => u.username !== username);
-
-  // no users? :(
-  if (otherUsers.length === 0) {
-    const empty = document.createElement("p");
-    empty.textContent = "No other users found.";
-    empty.className = "no-users";
-    userListDiv.appendChild(empty);
-    return;
-  }
-
-  // yes users? :D
-  otherUsers.forEach((user) => {
-    const userItem = document.createElement("div");
-    userItem.className = "user-item";
-    userItem.textContent = user.username;
-
-    userItem.addEventListener("click", () => {
-      activeChat = user.username;
-
-      document
-        .querySelectorAll(".user-item")
-        .forEach((el) => el.classList.remove("active"));
-      userItem.classList.add("active");
-
-      input.placeholder = `message ${activeChat}@bshift...`; // eg. "message dev.callahan@bshift..."
-      chatPartnerDiv.textContent = activeChat + "@bshift";
-
-      // calls message loader
-      loadMessages();
+    otherUsers.sort((a, b) => {
+      if (a.username === activeChat) return -1;
+      if (b.username === activeChat) return 1;
+      return 0;
     });
 
-    userListDiv.appendChild(userItem);
+    if (otherUsers.length === 0) {
+      const empty = document.createElement("p");
+      empty.textContent = "No other users found.";
+      empty.className = "no-users";
+      userListDiv.appendChild(empty);
+      return;
+    }
+
+    otherUsers.forEach((user) => {
+      const userItem = document.createElement("div");
+      userItem.className = "user-item";
+      if (user.username === activeChat) userItem.classList.add("active");
+      userItem.textContent = user.username;
+      userItem.addEventListener("click", () => {
+      activeChat = user.username;
+      renderUserList();
+      input.placeholder = `message ${activeChat}@bshift...`;
+      chatPartnerDiv.textContent = activeChat + "@bshift";
+      loadMessages();
+    });
+      userListDiv.appendChild(userItem);
   });
 }
 
 // Section 9: Event handlers
+
+/* messasge character limit */
+input.maxLength = 500;
+
+/* character counting logic */
+function updateCharCount() {
+  const counter = document.getElementById("char-counter");
+    if (counter) {
+      const remaining = input.value.length;
+      counter.textContent = `${remaining}/500`;
+      counter.style.color = remaining >= 500 ? "red" : "gray";
+    }
+}
+
+input.addEventListener("input", updateCharCount);
+
 // send message handler
 sendButton.addEventListener("click", sendMessage);
 
@@ -291,6 +265,7 @@ imageInput.addEventListener("change", () => {
   const wrapper = document.createElement("div");
   wrapper.className = "preview-wrapper";
 
+
   const img = document.createElement("img");
   img.src = URL.createObjectURL(file);
   img.className = "preview-image";
@@ -300,15 +275,14 @@ imageInput.addEventListener("change", () => {
   removeBtn.textContent = "✖";
   removeBtn.className = "remove-preview";
 
+
   removeBtn.addEventListener("click", () => {
-    imageInput.value = "";
-    imagePreviewContainer.innerHTML = "";
+  imageInput.value = "";
+  imagePreviewContainer.innerHTML = "";
   });
 
-  // wrappers
+// wrappers
   wrapper.appendChild(img);
   wrapper.appendChild(removeBtn);
   imagePreviewContainer.appendChild(wrapper);
 });
-
-
