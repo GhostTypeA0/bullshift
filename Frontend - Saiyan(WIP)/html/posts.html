@@ -2,6 +2,7 @@
 Assignment: Bull-Shift App | Posts - HTML
 Author: Luke Callahan, Saiyan Ren
 -->
+
 <!doctype html>
 <html>
 <head>
@@ -14,7 +15,7 @@ Author: Luke Callahan, Saiyan Ren
         <button id="openPostModel" onclick="toggleModel(true)">Create New Post</button>
     </div>
 
-    <!-- create a post overlay/model. this is hidden by default -->
+    <!-- create a post overlay/model. this is hidden by default --> 
     <div id="postModel" class="model">
         <div class="model-content">
             <span class="close" onclick="toggleModel(false)">&times;</span>
@@ -22,11 +23,16 @@ Author: Luke Callahan, Saiyan Ren
                 <h2>Create A Post</h2>
                 <input type="file" id="imageInput" style="display:none" accept="image/*,video/*">
                 <label for="imageInput" style="cursor:pointer">
+
+                <div class="preview-container">
+                <img id="imagePreview" src="" alt="Preview" style="display:none; max-width: 100%; height: auto; margin-top: 10px;">
+                </div>
                 <button type="button" onclick="document.getElementById('imageInput').click();">
                 <img src="../assets/upload.svg" alt="+">
                 </button>
                 </label>
-                <textarea id="caption" placeholder="Write a caption..."></textarea>
+                <!-- added maxlength character limit to user creation as well  --> 
+                <textarea id="caption" maxlength="500" placeholder="Write a caption..."></textarea>
                 <button type="button" onclick="addPost()">Post</button>
             </form>
         </div>
