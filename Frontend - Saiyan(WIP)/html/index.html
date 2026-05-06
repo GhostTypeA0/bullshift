@@ -1,48 +1,70 @@
 <!--
-Assignment: Bull-Shift App | Posts - HTML
-Author: Luke Callahan, Saiyan Ren
+Assignment: Bull-Shift App | Login/User Creation - HTML
+Author: Luke Callahan, Saiyan Ren, Addison 
 -->
 
 <!doctype html>
-<html>
-<head>
-    <title>Posts Test</title>
-    <link rel="stylesheet" href="../styles/posts-styles.css" />
-</head>
-<body>
-    <div class="container">
-        <!-- button for display the overlay -->
-        <button id="openPostModel" onclick="toggleModel(true)">Create New Post</button>
-    </div>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bull-Shift</title>
+    <link rel="stylesheet" href="../styles/index-styles.css" />
+  </head>
+  <body>
+    <!-- sidebar aside -->
+    <aside class="sidebar">
+      <div id="topContent">\
+        <!-- temp logo -->
+        <img id="topLogo" src="../assets/logo.svg">
+        <h2>Bull-Shift</h2>
+      </div>
+      <!-- header title -->
+      <hr/>
+      <div id="loggedin-user">placeholder@bshift</div>
+      <hr/>
 
-    <!-- create a post overlay/model. this is hidden by default --> 
-    <div id="postModel" class="model">
-        <div class="model-content">
-            <span class="close" onclick="toggleModel(false)">&times;</span>
-            <form id="createpost">
-                <h2>Create A Post</h2>
-                <input type="file" id="imageInput" style="display:none" accept="image/*,video/*">
-                <label for="imageInput" style="cursor:pointer">
+      <!-- chat/posts togglers -->
+      <div id="buttDiv">
+        <button id="chatBtn" class="button chatBtn">Chat</button>
+        <button id="postsBtn" class="button postsBtn">Posts</button>
+      </div>
 
-                <div class="preview-container">
-                <img id="imagePreview" src="" alt="Preview" style="display:none; max-width: 100%; height: auto; margin-top: 10px;">
-                </div>
-                <button type="button" onclick="document.getElementById('imageInput').click();">
-                <img src="../assets/upload.svg" alt="+">
-                </button>
-                </label>
-                <!-- added maxlength character limit to user creation as well  --> 
-                <textarea id="caption" maxlength="500" placeholder="Write a caption..."></textarea>
-                <button type="button" onclick="addPost()">Post</button>
-            </form>
+      <!-- side user list panel --> <!-- added maxlength character limit to friend's search bar --> 
+      <aside class="friend-request">
+        <input type="text" id="friendSearch" maxlength="30" placeholder="Find Friends">
+
+
+        <button id="sendRequest" >Add friend</button>
+        <button id="getRequest">Requests</button>
+        
+        <div id="no-friends"></div>
+
+      </aside>
+
+      <!--THIS IS THE FRIEND REQUEST LIST-->
+      <div class="requestBox hidden"></div>
+    
+      </div>
+
+        <!-- friend list section -->
+        <div id="friends-list-container">
+        <hr/>
+        <h3>Friends</h3>
+        <div id="friends-list">
         </div>
-    </div>
+        </div>
 
-    <!-- feed area -->
-    <div id="feed"></div>
-
-    <!-- adds icon library -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="../scripts/posts-script.js"></script>
-</body>
+      <!-- logout button -->
+      <div id="buttDiv2">
+        <button type="button" id="logoutButton">Logout</button>
+      </div>
+      <br />
+    </aside>
+    <!-- center of the page -->
+    <main class="content">
+      <div id="pages-container"></div>
+    </main>
+    <script src="../scripts/index-script.js"></script>
+  </body>
 </html>
