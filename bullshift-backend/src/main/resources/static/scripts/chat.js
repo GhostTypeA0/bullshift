@@ -4,7 +4,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // DOM ELEMENTS (MATCH EXACTLY WITH chat.html)
+    // DOM elements
     const messagesDiv = document.getElementById("messages");
     const input = document.getElementById("messageInput");
     const sendButton = document.getElementById("sendButton");
@@ -15,21 +15,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageButton = document.getElementById("imageButton");
     const imagePreviewContainer = document.getElementById("imagePreviewContainer");
 
-    // If these elements don't exist, we are NOT on chat.html
-    if (!messagesDiv || !input || !sendButton || !userListDiv || !chatPartnerDiv) {
-        console.warn("chat.js loaded outside chat.html — skipping chat logic.");
-        return;
-    }
+    const charCounter = document.getElementById("char-counter");
 
-    // STATE
+    // ensure we are on chat.html
+    if (!messagesDiv || !input || !sendButton) return;
+
+    // state
     let username = "";
     let activeChat = null;
     let stompClient = null;
 
-    // AUTH CHECK
-
+    // auth check
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
     if (!currentUser) {
         window.location.href = "login.html";
         return;
@@ -43,29 +40,30 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFriendList();
     connectWebSocket();
 
-    // Auto-open chat if URL contains ?user=
+    // auto-open chat via ?user=
     const params = new URLSearchParams(window.location.search);
     const friendParam = params.get("user");
     if (friendParam) {
         setTimeout(() => selectFriend(friendParam), 300);
     }
 
-
-    // TIMESTAMP HELPER
-
-    function getTimestamp() {
-        return new Date().toLocaleString([], {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
+    // timestamp helper
+    function formatTimestamp(ts) {
+        try {
+            const d = new Date(ts);
+            return d.toLocaleString([], {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        } catch {
+            return ts;
+        }
     }
 
-
-    // IMAGE → BASE64
-
+    // convert image to base64
     function toBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -75,35 +73,46 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // MESSAGE BUBBLE CREATION
-    function createMessageElement(messageUsername, text, timestamp, image) {
+    // create message bubble
+    function createMessageElement(msg) {
         const messageDiv = document.createElement("div");
         messageDiv.className = "message";
+        messageDiv.dataset.id = msg.id;
 
-        const isOwn = messageUsername === username;
+        const isOwn = msg.sender === username;
         messageDiv.classList.add(isOwn ? "sent" : "received");
+
+        // unsend button (only for own messages)
+        if (isOwn) {
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "✖";
+            deleteBtn.className = "unsend-btn";
+            deleteBtn.title = "Unsend message";
+            deleteBtn.onclick = () => unsendMessage(msg.id);
+            messageDiv.appendChild(deleteBtn);
+        }
 
         const timestampSpan = document.createElement("span");
         timestampSpan.className = "timestamp";
-        timestampSpan.textContent = `[${timestamp}] `;
-        timestampSpan.title = new Date(timestamp).toLocaleString();
+        timestampSpan.textContent = `[${formatTimestamp(msg.timestamp)}] `;
+        timestampSpan.title = new Date(msg.timestamp).toLocaleString();
 
         const usernameSpan = document.createElement("span");
         usernameSpan.className = "username";
-        usernameSpan.textContent = messageUsername + ":";
+        usernameSpan.textContent = msg.sender + ":";
 
         messageDiv.appendChild(timestampSpan);
         messageDiv.appendChild(usernameSpan);
 
-        if (text) {
+        if (msg.content) {
             const textSpan = document.createElement("span");
-            textSpan.textContent = text;
+            textSpan.textContent = msg.content;
             messageDiv.appendChild(textSpan);
         }
 
-        if (image) {
+        if (msg.image) {
             const img = document.createElement("img");
-            img.src = image;
+            img.src = msg.image;
             img.className = "chat-image";
             img.style.maxWidth = "200px";
             img.style.marginTop = "5px";
@@ -113,12 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return messageDiv;
     }
 
-    // WEBSOCKET CONNECTION
+    // websocket connection
     function connectWebSocket() {
-        const socket = new SockJS("http://localhost:8081/ws");
+        const socket = new SockJS("http://52.14.61.43:8081/ws");
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
+
+            // incoming messages
             stompClient.subscribe("/user/queue/messages", (frame) => {
                 const msg = JSON.parse(frame.body);
 
@@ -128,21 +139,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!isRelevant) return;
 
-                const ts = msg.timestamp || getTimestamp();
-                const el = createMessageElement(
-                    msg.sender,
-                    msg.content,
-                    ts,
-                    msg.image || null
-                );
-
+                const el = createMessageElement(msg);
                 messagesDiv.appendChild(el);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+
+            // incoming delete events
+            stompClient.subscribe("/user/queue/delete", (frame) => {
+                const id = Number(frame.body);
+                const el = messagesDiv.querySelector(`[data-id="${id}"]`);
+                if (el) el.remove();
             });
         });
     }
 
-    // SEND MESSAGE
+    // send message
     async function sendMessage() {
         if (!activeChat) {
             alert("Select a user first.");
@@ -154,56 +165,57 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const text = input.value.trim();
+        const rawText = input.value.trim();
+        const text = rawText.substring(0, 500);
         const file = imageInput.files[0];
 
         if (!text && !file) return;
 
-        const timestamp = getTimestamp();
         let imageData = null;
-
-        if (file) {
-            imageData = await toBase64(file);
-        }
+        if (file) imageData = await toBase64(file);
 
         const msg = {
             sender: username,
             receiver: activeChat,
             content: text,
-            timestamp,
-            image: imageData,
+            image: imageData
         };
 
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(msg));
 
-        const el = createMessageElement(username, text, timestamp, imageData);
-        messagesDiv.appendChild(el);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
         input.value = "";
         imageInput.value = "";
         imagePreviewContainer.innerHTML = "";
+        updateCharCount();
     }
 
-    // LOAD CHAT HISTORY (REST)
+    // unsend message
+    async function unsendMessage(id) {
+        if (!confirm("Unsend this message?")) return;
+
+        await fetch(`http://52.14.61.43:8081/api/messages/chat/message/${id}`, {
+            method: "DELETE"
+        });
+
+        stompClient.send("/app/chat.deleteMessage", {}, JSON.stringify(id));
+
+        const el = messagesDiv.querySelector(`[data-id="${id}"]`);
+        if (el) el.remove();
+    }
+
+    // load chat history
     async function loadMessages() {
         messagesDiv.innerHTML = "";
         if (!activeChat) return;
 
-        const url = `/api/chat/${encodeURIComponent(username)}/${encodeURIComponent(activeChat)}`;
+        const url = `http://52.14.61.43:8081/api/chat/${username}/${activeChat}`;
 
         try {
             const res = await fetch(url);
             const data = await res.json();
 
             data.forEach((m) => {
-                const ts = m.timestamp || getTimestamp();
-                const el = createMessageElement(
-                    m.sender,
-                    m.content,
-                    ts,
-                    m.image || null
-                );
+                const el = createMessageElement(m);
                 messagesDiv.appendChild(el);
             });
 
@@ -213,12 +225,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // FRIEND LIST
+    // friend list
     async function renderFriendList() {
         userListDiv.innerHTML = "";
 
         try {
-            const res = await fetch(`/api/friends/${username}`);
+            const res = await fetch(`http://52.14.61.43:8081/api/friends/${username}`);
             const friends = await res.json();
 
             if (friends.length === 0) {
@@ -245,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // SELECT FRIEND
+    // select friend
     function selectFriend(friendName) {
         activeChat = friendName;
 
@@ -264,7 +276,17 @@ document.addEventListener("DOMContentLoaded", () => {
         loadMessages();
     }
 
-    // EVENTS
+    // character counter
+    function updateCharCount() {
+        if (!charCounter) return;
+        const len = input.value.length;
+        charCounter.textContent = `${len}/500`;
+        charCounter.style.color = len >= 500 ? "red" : "gray";
+    }
+
+    input.addEventListener("input", updateCharCount);
+
+    // events
     sendButton.addEventListener("click", sendMessage);
 
     input.addEventListener("keydown", (e) => {
@@ -303,4 +325,4 @@ document.addEventListener("DOMContentLoaded", () => {
         imagePreviewContainer.appendChild(wrapper);
     });
 
-}); // END DOMContentLoaded WRAPPER
+});

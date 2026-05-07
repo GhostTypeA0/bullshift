@@ -27,15 +27,40 @@ hr {
 /* ===== SIDEBAR ===== */
 .sidebar {
   min-width: 250px;
+  max-width: 250px;
   background: rgb(22, 22, 22);
-  padding: 1%;
-  margin: 0.5%;
+  padding: 1rem;
+  margin: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 10px;
   z-index: 1;
   border-radius: 10px;
   border: 1px solid rgb(44, 44, 44);
+
+  /* Scrollbar */
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 97vh;
+  /* Firefox-only scrollbar styling (Chrome/Safari ignore these) */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(0, 158, 8) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgb(0, 158, 8);
+  border-radius: 10px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgb(0, 180, 10);
 }
 
 /* ===== TOP LOGO + TITLE ===== */
@@ -136,6 +161,10 @@ hr {
   outline: none;
 }
 
+#friendSearch.error::placeholder {
+  color: red;
+}
+
 /* Add Friend + Requests buttons */
 #sendRequest,
 #getRequest {
@@ -168,7 +197,7 @@ hr {
   padding: 15px;
   border-radius: 10px;
   color: white;
-  z-index: 10;
+  z-index: 100;
 }
 
 .requestBox.hidden {
@@ -216,6 +245,49 @@ hr {
 
 .dcBtn:hover {
   background-color: rgb(100, 0, 0);
+}
+
+/* ===== FRIEND LIST ===== */
+#friends-list-container {
+  width: 208px;
+  background: rgb(22, 22, 22);
+  padding: 15px;
+  margin: 0.5%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
+  color: white;
+}
+
+#friends-list-container h3 {
+  margin: 0 0 5px 0;
+  color: white;
+  font-size: 16px;
+}
+
+#friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.friend-name {
+  padding: 12px;
+  background-color: rgb(15, 15, 15);
+  border: 1px solid rgb(44, 44, 44);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.friend-name:hover {
+  background: rgb(39, 39, 39);
 }
 
 /* ===== LOGOUT BUTTON ===== */

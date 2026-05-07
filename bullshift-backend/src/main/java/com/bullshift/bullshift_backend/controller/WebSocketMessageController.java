@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Controller
 public class WebSocketMessageController {
@@ -21,32 +22,61 @@ public class WebSocketMessageController {
         this.messagingTemplate = messagingTemplate;
     }
 
+    // SEND MESSAGE (unchanged except for image fix)
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(ChatMessage chatMessage) {
-//Fix saved image
+
         Message msg = new Message(
                 chatMessage.getSender(),
                 chatMessage.getReceiver(),
                 chatMessage.getContent(),
-                chatMessage.getImage(),          // <-- THIS WAS MISSING
+                chatMessage.getImage(),
                 LocalDateTime.now()
         );
 
         // Save to DB
-        messageRepository.save(msg);
+        Message saved = messageRepository.save(msg);
 
-        // Push message to receiver
+        // Attach ID so frontend knows which message this is
+        chatMessage.setImage(msg.getImage()); // ensure image is included
+
+        // Include message ID in WebSocket payload
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getReceiver(),
                 "/queue/messages",
-                chatMessage
+                saved
         );
 
-        // Push message back to sender
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getSender(),
                 "/queue/messages",
-                chatMessage
+                saved
+        );
+    }
+
+    // UNSEND / DELETE MESSAGE
+    @MessageMapping("/chat.deleteMessage")
+    public void deleteMessage(Long messageId) {
+
+        Optional<Message> msgOpt = messageRepository.findById(messageId);
+        if (msgOpt.isEmpty()) return;
+
+        Message msg = msgOpt.get();
+
+        // Delete from DB
+        messageRepository.deleteById(messageId);
+
+        // Notify both sender and receiver
+        messagingTemplate.convertAndSendToUser(
+                msg.getSender(),
+                "/queue/delete",
+                messageId
+        );
+
+        messagingTemplate.convertAndSendToUser(
+                msg.getReceiver(),
+                "/queue/delete",
+                messageId
         );
     }
 }

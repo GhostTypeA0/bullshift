@@ -35,13 +35,20 @@ Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
                 <h2>Create A Post</h2>
 
                 <!-- Image upload -->
-                <input type="file" id="imageInput" accept="image/*" />
+                <input type="file" id="imageInput" accept="image/*" hidden />
+
+                <!-- Upload button -->
+                <button type="button" id="uploadBtn" onclick="imageInput.click()">
+                    <img src="/assets/upload.svg" alt="Upload">
+                </button>
 
                 <!-- Preview -->
-                <img id="imagePreview" class="image-preview" alt="Preview" style="display:none;" />
+                <div class="preview-container">
+                    <img id="imagePreview" class="image-preview" alt="Preview" style="display:none;" />
+                </div>
 
                 <!-- Caption -->
-                <textarea id="caption" placeholder="Write a caption..."></textarea>
+                <textarea id="caption" maxlength="500" placeholder="Write a caption..."></textarea>
 
                 <!-- Submit -->
                 <button type="submit" id="postButton">Post</button>

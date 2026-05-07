@@ -1,7 +1,7 @@
 /* 
 Assignment: Bull-Shift App | Login Page - Stylesheet
-Authors: Luke Callahan
-Merged + Backend Integration Cleanup: John R. Nottom IV
+Authors: Luke Callahan, Saiyan Ren
+Unified + Backend Integration Cleanup: John R. Nottom IV
 */
 
 /* ===== RESET ===== */
@@ -45,16 +45,6 @@ body {
   background: rgb(15, 15, 15);
   border: 1px solid rgb(44, 44, 44);
   border-radius: 10px;
-}
-
-.page-content {
-  display: flex;
-  height: 100%;
-  width: 100%;
-  background: rgb(22, 22, 22);
-  border-radius: 10px;
-  border: 1px solid rgb(44, 44, 44);
-  overflow: hidden;
 }
 
 /* ===== LEFT PANEL (Forms) ===== */
@@ -193,6 +183,7 @@ button:hover {
   border: 1px solid rgb(44, 44, 44);
   color: white;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .toggle-buttons button:hover {

@@ -12,6 +12,20 @@ Unified + Backend Integration Cleanup: John R. Nottom IV
   font-family: Arial, sans-serif;
 }
 
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(0, 158, 8);
+  border-radius: 10px;
+}
+
 /* ===== BODY ===== */
 body {
   min-height: 100vh;
@@ -23,8 +37,80 @@ body {
   color: #e0e0e0;
 }
 
-/* ===== CONTAINERS ===== */
-.container,
+/* ===== CREATE POST CONTAINER ===== */
+.container {
+  width: 100%;
+  max-width: 500px;
+  background: #1e1e1e;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== FORM ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: center;
+}
+
+/* ===== IMAGE UPLOAD BUTTON ===== */
+#uploadBtn {
+  padding: 10px;
+  background: #2c2c2c;
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+#uploadBtn:hover {
+  background: rgb(0, 158, 8);
+}
+
+/* ===== IMAGE PREVIEW ===== */
+.image-preview {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+  display: none;
+}
+
+/* ===== CAPTION ===== */
+textarea,
+input {
+  width: 100%;
+  padding: 12px;
+  background: #2c2c2c;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+}
+textarea:focus,
+input:focus {
+  outline: none;
+  border-color: rgb(0, 158, 8);
+}
+
+/* ===== POST BUTTON ===== */
+button {
+  padding: 10px 15px;
+  border-radius: 6px;
+  background: rgb(0, 158, 8);
+  border: 1px solid #444;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+button:hover {
+  background: rgb(0, 128, 6);
+}
+
+/* ===== FEED POSTS ===== */
 .post {
   width: 100%;
   max-width: 500px;
@@ -36,83 +122,10 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-h2 {
-  margin-bottom: 20px;
-  text-align: center;
-  color: #ffffff;
-}
-
-/* ===== IMAGES ===== */
-img,
 .post img {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 8px;
-  opacity: 0.9;
-}
-
-/* ===== INPUTS ===== */
-textarea,
-input {
-  width: 100%;
-  margin-top: 10px;
-  padding: 12px;
-  background: #2c2c2c;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #ffffff;
-  font-size: 14px;
-}
-
-textarea:focus,
-input:focus {
-  outline: none;
-  border-color: rgb(0, 158, 8);
-}
-
-/* ===== BUTTONS ===== */
-button {
-  margin-top: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 6px;
-  background: #4e73df;
-  color: #ffffff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-button:hover {
-  background: #2e59d9;
-}
-
-/* ===== COMMENT BUTTONS ===== */
-.comment-wrapper button {
-  background-color: rgb(0, 158, 8);
-}
-
-.comment-wrapper button:hover {
-  background-color: rgb(0, 128, 6);
-}
-
-/* Delete comment */
-button[onclick^="deleteComment"] {
-  background-color: rgb(0, 158, 8);
-}
-
-button[onclick^="deleteComment"]:hover {
-  background-color: rgb(0, 128, 6);
-}
-
-/* Delete post */
-button[onclick^="deletePost"] {
-  background-color: #3f3f3f;
-}
-
-button[onclick^="deletePost"]:hover {
-  background-color: #555555;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 /* ===== LIKE BUTTON ===== */
@@ -128,9 +141,8 @@ button[onclick^="deletePost"]:hover {
   color: #bbb;
   transition: color 0.2s;
 }
-
 .fa-thumbs-up:hover {
-  color: #4e73df;
+  color: rgb(0, 158, 8);
   cursor: pointer;
 }
 
@@ -156,10 +168,17 @@ button[onclick^="deletePost"]:hover {
   color: #888;
   font-size: 0.85em;
 }
-
 .timeStamp:hover,
 .timestamp:hover {
   color: #bbb;
+}
+
+/* ===== DELETE POST BUTTON ===== */
+button[onclick^="deletePost"] {
+  background-color: #3f3f3f;
+}
+button[onclick^="deletePost"]:hover {
+  background-color: rgb(182, 0, 0);
 }
 
 /* ===== MODAL ===== */
@@ -192,7 +211,6 @@ button[onclick^="deletePost"]:hover {
   font-weight: bold;
   cursor: pointer;
 }
-
 .close:hover {
   color: white;
 }

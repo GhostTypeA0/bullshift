@@ -16,6 +16,7 @@ public class ChatHistoryController {
         this.messageRepository = messageRepository;
     }
 
+    // load chat history between two users
     @GetMapping("/{sender}/{receiver}")
     public List<Message> getChatHistory(@PathVariable String sender,
                                         @PathVariable String receiver) {

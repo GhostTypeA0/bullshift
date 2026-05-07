@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
@@ -15,4 +16,13 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         ORDER BY m.id ASC
     """)
     List<Message> findChatHistory(String user1, String user2);
+
+    // Needed for UNSEND
+    Optional<Message> findById(Long id);
+
+    // Needed for UNSEND
+    void deleteById(Long id);
+
+    // Optional: check existence
+    boolean existsById(Long id);
 }

@@ -1,6 +1,6 @@
 <!--
 Assignment: Bull-Shift App | Login/User Creation - HTML
-Authors: Luke Callahan
+Authors: Luke Callahan, Saiyan Ren
 Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
 -->
 
@@ -32,11 +32,11 @@ Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
             <form id="createForm" style="display: none;">
                 <h2>Create User</h2>
 
-                <input type="text" id="username" placeholder="Username" required />
-                <input type="email" id="email" placeholder="Email (optional)" />
+                <input type="text" id="username" placeholder="Username" maxlength="20" required />
+                <input type="email" id="email" placeholder="Email (optional)" maxlength="50" />
 
                 <div class="password-wrapper">
-                    <input type="password" id="password" placeholder="Password" required />
+                    <input type="password" id="password" placeholder="Password" maxlength="30" required />
                     <input type="checkbox" onclick="password.type = this.checked ? 'text' : 'password'" />
                 </div>
 

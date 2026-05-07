@@ -38,7 +38,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
 
-        // ⭐ FIX: Allow large Base64 images to pass through WebSocket
+        // FIX: Allow large Base64 images to pass through WebSocket
         registry.setMessageSizeLimit(512 * 1024);      // 512 KB
         registry.setSendBufferSizeLimit(1024 * 1024);  // 1 MB
         registry.setSendTimeLimit(20 * 1000);          // 20 seconds

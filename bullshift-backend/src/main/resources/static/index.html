@@ -1,8 +1,9 @@
 <!--
 Assignment: Bull-Shift App | Login/User Creation - HTML
-Author: Luke Callahan, Saiyan Ren
-Editor Backend Intergration: John R Nottom, Addison S
+Authors: Luke Callahan, Saiyan Ren
+Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
 -->
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -40,13 +41,20 @@ Editor Backend Intergration: John R Nottom, Addison S
 
         <!-- Friend Search + Requests -->
         <div class="friend-panel">
-            <input type="text" id="friendSearch" placeholder="Find Friends">
+            <input type="text" id="friendSearch" maxlength="30" placeholder="Find Friends">
             <button id="sendRequest">Add Friend</button>
             <button id="getRequest">Requests</button>
         </div>
 
         <!-- Friend Request Popup -->
         <div class="requestBox hidden"></div>
+
+        <!-- Friend List -->
+        <div id="friends-list-container">
+            <hr />
+            <h3>Friends</h3>
+            <div id="friends-list"></div>
+        </div>
 
         <!-- Logout -->
         <div id="buttDiv2">

@@ -1,41 +1,40 @@
 // Assignment: Bull-Shift App | Posts - JavaScript
 // Authors: Luke Callahan, Saiyan Ren
-// Merged + Backend Integration: John R. Nottom IV, Addison S
+// Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
 
-// BACKEND BASE URL
-const API_BASE = "http://localhost:8081";
+// backend base URL
+const API_BASE = "http://52.14.61.43:8081";
 
-// DOM ELEMENTS
+// DOM elements
 const feed = document.getElementById("feed");
 const imageInput = document.getElementById("imageInput");
 const imagePreview = document.getElementById("imagePreview");
 const captionInput = document.getElementById("caption");
 const createPostForm = document.getElementById("createpost");
 
-// MODAL OPEN/CLOSE LOGIC (from original UI)
+// modal open/close
 function toggleModel(show) {
-    const model = document.getElementById("postModal");
-    model.style.display = show ? "block" : "none";
+    const modal = document.getElementById("postModal");
+    modal.style.display = show ? "block" : "none";
 }
 
-// Close modal when clicking outside of it
-window.onclick = function(event) {
-    const model = document.getElementById("postModal");
-    if (event.target === model) {
-        model.style.display = "none";
-    }
+// close modal when clicking outside
+window.onclick = function (event) {
+    const modal = document.getElementById("postModal");
+    if (event.target === modal) modal.style.display = "none";
 };
 
-// STATE
+// state
 let posts = [];
 let likedPosts = new Set(JSON.parse(localStorage.getItem("likedPosts")) || []);
 const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-// HELPERS
+// save liked posts
 function saveLikedPosts() {
     localStorage.setItem("likedPosts", JSON.stringify([...likedPosts]));
 }
 
+// convert file → base64
 function toBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -45,8 +44,47 @@ function toBase64(file) {
     });
 }
 
+// compress image before upload
+function compressImage(file, maxWidth = 700, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressed = canvas.toDataURL(file.type, quality);
+                resolve(compressed);
+            };
+
+            img.onerror = reject;
+        };
+
+        reader.onerror = reject;
+    });
+}
+
+// timestamp formatting
 function formatDate(dateStr) {
-    if (!dateStr) return "";
+    if (!dateStr) return { display: "", hover: "" };
+
     const date = new Date(dateStr);
 
     const hoverOptions = {
@@ -64,7 +102,7 @@ function formatDate(dateStr) {
     };
 }
 
-// LOAD POSTS FROM BACKEND
+// load posts from backend
 async function loadPosts() {
     try {
         const res = await fetch(`${API_BASE}/api/posts`);
@@ -75,7 +113,7 @@ async function loadPosts() {
     }
 }
 
-// RENDER POSTS
+// render posts
 function renderPosts() {
     feed.innerHTML = "";
 
@@ -87,12 +125,12 @@ function renderPosts() {
         const isLiked = likedPosts.has(post.id);
         const dates = formatDate(post.createdAt);
 
-        // COMMENTS (frontend-only)
+        // comments (frontend-only)
         const commentsHTML = (post.comments || []).map((comment, index) => {
             const cDate = formatDate(comment.date);
             const canDelete =
-                comment.username === post.username ||
-                comment.username === currentUser.username;
+                comment.username === currentUser.username ||
+                post.username === currentUser.username;
 
             return `
                 <div class="comment-text">
@@ -105,7 +143,7 @@ function renderPosts() {
             `;
         }).join("");
 
-        // POST HTML
+        // post HTML
         div.innerHTML = `
             <div class="post-wrapper">
                 <img src="${post.image}" class="post-image" alt="Post image">
@@ -130,7 +168,7 @@ function renderPosts() {
                     ${commentsHTML}
                 </div>
                 <div class="comment-input-row">
-                    <input type="text" id="input-${post.id}" placeholder="Write a comment...">
+                    <input type="text" id="input-${post.id}" maxlength="500" placeholder="Write a comment (max 500)...">
                     <button onclick="addComment(${post.id})">Comment</button>
                 </div>
             </div>
@@ -143,13 +181,13 @@ function renderPosts() {
         feed.appendChild(div);
     });
 
-    // LIKE HANDLERS
+    // like handlers
     document.querySelectorAll(".like-icon").forEach(icon => {
         icon.addEventListener("click", () => toggleLike(icon, icon.dataset.id));
     });
 }
 
-// LIKE / UNLIKE POST
+// like/unlike post
 async function toggleLike(iconElement, postId) {
     const id = parseInt(postId);
     const isLiked = likedPosts.has(id);
@@ -177,7 +215,7 @@ async function toggleLike(iconElement, postId) {
     }
 }
 
-// COMMENTS (FRONTEND-ONLY)
+// add comment (frontend-only)
 function addComment(postId) {
     const input = document.getElementById(`input-${postId}`);
     const text = input.value.trim();
@@ -196,6 +234,7 @@ function addComment(postId) {
     renderPosts();
 }
 
+// delete comment (frontend-only)
 function deleteComment(postId, commentIndex) {
     const post = posts.find(p => p.id === postId);
     if (!post || !post.comments) return;
@@ -204,7 +243,7 @@ function deleteComment(postId, commentIndex) {
     renderPosts();
 }
 
-// DELETE POST
+// delete post
 async function deletePost(postId) {
     if (!confirm("Are you sure you want to delete this post?")) return;
 
@@ -216,7 +255,7 @@ async function deletePost(postId) {
     }
 }
 
-// CREATE POST
+// create post
 createPostForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -234,7 +273,7 @@ createPostForm.addEventListener("submit", async (e) => {
 
     try {
         let imageData = null;
-        if (file) imageData = await toBase64(file);
+        if (file) imageData = await compressImage(file, 800, 0.8);
 
         const res = await fetch(`${API_BASE}/api/posts`, {
             method: "POST",
@@ -250,6 +289,7 @@ createPostForm.addEventListener("submit", async (e) => {
             imageInput.value = "";
             imagePreview.style.display = "none";
             captionInput.value = "";
+            toggleModel(false);
             loadPosts();
         } else {
             alert("Failed to create post.");
@@ -263,7 +303,7 @@ createPostForm.addEventListener("submit", async (e) => {
     }
 });
 
-// IMAGE PREVIEW
+// image preview
 imageInput.addEventListener("change", () => {
     const file = imageInput.files[0];
     if (file) {
@@ -278,5 +318,5 @@ imageInput.addEventListener("change", () => {
     }
 });
 
-// INITIAL LOAD
+// initial load
 loadPosts();
