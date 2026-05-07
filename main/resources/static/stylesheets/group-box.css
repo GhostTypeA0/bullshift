@@ -1,0 +1,103 @@
+.groupBox {
+  position: fixed;
+  bottom: 45%;
+  right: 25%;
+  width: 300px;
+  height: 200px;
+  background: #ffffff;
+  z-index: 9999;
+  background: rgb(15, 15, 15);
+
+  border: 1px solid rgb(38, 38, 38);
+  border-radius: 10px;
+
+}
+
+.groupBox.visible{
+  display: flex;
+  flex-direction: column;
+}
+
+.groupBox.hidden {
+  display: none;
+}
+
+
+
+.groupBody {
+  padding: 3px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 90%;
+}
+
+
+/*CUSTOMIZING THE SCROLLBAR*/
+.groupBody::-webkit-scrollbar {
+  width: 5px;
+  background: transparent;
+}
+
+.groupBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.groupBody::-webkit-scrollbar-thumb {
+  background: rgba(104, 104, 104, 0.385);
+  border-radius: 10px;
+}
+
+
+
+
+.groupFriendsCSS {
+  display: block;
+  margin: 3px;
+  color: white;
+  font-weight: bold;
+  background: black;
+
+  background: rgb(22, 22, 22);
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
+  transition: 0.2s ease;
+}
+
+
+.groupFriendsCSS:hover {
+  background: rgb(39, 39, 39);
+}
+
+
+.groupFriendsCSS.selected {
+  background: rgb(0, 158, 8);
+  color: white;
+}
+
+.groupFriendsCSS.selected:hover {
+  background: rgb(0, 104, 5);
+}
+
+.createGroupBtn {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+
+.visSelect {
+  color: white;
+  font-weight: bold;
+  background: black;
+
+  background: rgb(22, 22, 22);
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgb(44, 44, 44);
+  transition: 0.2s ease;
+}
+
+.visSelect:hover {
+  background: rgb(39, 39, 39);
+}
