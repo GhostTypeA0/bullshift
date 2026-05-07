@@ -130,19 +130,20 @@ document.addEventListener("DOMContentLoaded", () => {
         stompClient.connect({}, () => {
 
             // incoming messages
-            stompClient.subscribe("/user/queue/messages", (frame) => {
-                const msg = JSON.parse(frame.body);
+            stompClient.subscribe(`/user/${username}/queue/messages`, (frame) => {
+    const msg = JSON.parse(frame.body);
 
-                const isRelevant =
-                    (msg.sender === username && msg.receiver === activeChat) ||
-                    (msg.sender === activeChat && msg.receiver === username);
+    const isRelevant =
+        (msg.sender === username && msg.receiver === activeChat) ||
+        (msg.sender === activeChat && msg.receiver === username);
 
-                if (!isRelevant) return;
+    if (!isRelevant) return;
 
-                const el = createMessageElement(msg);
-                messagesDiv.appendChild(el);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            });
+    const el = createMessageElement(msg);
+    messagesDiv.appendChild(el);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+});
+
 
             // incoming delete events
             stompClient.subscribe("/user/queue/delete", (frame) => {
