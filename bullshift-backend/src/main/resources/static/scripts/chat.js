@@ -123,36 +123,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // websocket connection
-    function connectWebSocket() {
-        const socket = new SockJS("http://52.14.61.43:8081/ws");
-        stompClient = Stomp.over(socket);
+   function connectWebSocket() {
+    const socket = new SockJS("http://52.14.61.43:8081/ws");
+    stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, () => {
+    stompClient.connect({}, () => {
 
-            // incoming messages
-            stompClient.subscribe(`/user/${username}/queue/messages`, (frame) => {
-    const msg = JSON.parse(frame.body);
+        // incoming messages
+        stompClient.subscribe(`/user/${username}/queue/messages`, (frame) => {
+            const msg = JSON.parse(frame.body);
 
-    const isRelevant =
-        (msg.sender === username && msg.receiver === activeChat) ||
-        (msg.sender === activeChat && msg.receiver === username);
+            const isRelevant =
+                (msg.sender === username && msg.receiver === activeChat) ||
+                (msg.sender === activeChat && msg.receiver === username);
 
-    if (!isRelevant) return;
+            if (!isRelevant) return;
 
-    const el = createMessageElement(msg);
-    messagesDiv.appendChild(el);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-});
-
-
-            // incoming delete events
-            stompClient.subscribe("/user/queue/delete", (frame) => {
-                const id = Number(frame.body);
-                const el = messagesDiv.querySelector(`[data-id="${id}"]`);
-                if (el) el.remove();
-            });
+            const el = createMessageElement(msg);
+            messagesDiv.appendChild(el);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         });
-    }
+
+        // incoming delete events
+        stompClient.subscribe(`/user/${username}/queue/delete`, (frame) => {
+            const id = Number(frame.body);
+            const el = messagesDiv.querySelector(`[data-id="${id}"]`);
+            if (el) el.remove();
+        });
+    });
+}
 
     // send message
     async function sendMessage() {
