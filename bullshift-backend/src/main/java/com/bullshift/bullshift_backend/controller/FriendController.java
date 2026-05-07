@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://52.14.61.43")
 public class FriendController {
 
     private final FriendService friendService;

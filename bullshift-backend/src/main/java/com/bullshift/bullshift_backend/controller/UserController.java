@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://52.14.61.43")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -27,7 +28,6 @@ public class UserController {
     }
 
     // GET USER BY USERNAME
-    // (Fixed: no Optional.map() generics conflict)
     @GetMapping("/{username}")
     public ResponseEntity<?> getUser(@PathVariable String username) {
 
