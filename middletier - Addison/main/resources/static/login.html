@@ -1,0 +1,80 @@
+<!--
+Assignment: Bull-Shift App | Login/User Creation - HTML
+Authors: Luke Callahan
+Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>BullShift Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Login page styling -->
+    <link rel="stylesheet" href="/stylesheets/login-style.css" />
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <!-- LEFT PANEL (Forms) -->
+        <div class="container">
+
+            <!-- Toggle buttons -->
+            <div class="toggle-buttons">
+                <button id="showCreate">Create User</button>
+                <button id="showLogin">Login</button>
+            </div>
+
+            <!-- CREATE USER FORM -->
+            <form id="createForm" style="display: none;">
+                <h2>Create User</h2>
+
+                <input type="text" id="username" placeholder="Username" required />
+                <input type="email" id="email" placeholder="Email (optional)" />
+
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Password" required />
+                    <input type="checkbox" onclick="password.type = this.checked ? 'text' : 'password'" />
+                </div>
+
+                <button type="submit">Create User</button>
+
+                <p id="createMessage"></p>
+            </form>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm">
+                <h2>User Login</h2>
+
+                <input type="text" id="loginUsername" placeholder="Username" required />
+
+                <div class="password-wrapper">
+                    <input type="password" id="loginPassword" placeholder="Password" required />
+                    <input type="checkbox" onclick="loginPassword.type = this.checked ? 'text' : 'password'" />
+                </div>
+
+                <button type="submit">Login</button>
+
+                <p id="loginMessage"></p>
+            </form>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="divider"></div>
+
+        <!-- RIGHT PANEL (Branding) -->
+        <div class="right-panel">
+            <img src="/assets/logo.svg" alt="BullShift Logo" class="logo" />
+            <h1>Bull-Shift Messenger</h1>
+            <p class="tagline">Spread Some Bull-Shift.</p>
+        </div>
+
+    </div>
+
+    <!-- Backend-ready login/register logic -->
+    <script src="/scripts/users.js"></script>
+</body>
+</html>

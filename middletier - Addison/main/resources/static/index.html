@@ -1,0 +1,79 @@
+<!--
+Assignment: Bull-Shift App | Login/User Creation - HTML
+Author: Luke Callahan, Saiyan Ren
+Editor Backend Intergration: John R Nottom, Addison S
+-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BullShift</title>
+
+    <!-- Sidebar + layout styling -->
+    <link rel="stylesheet" href="/stylesheets/index-styles.css" />
+    <!-- CSS FOR CREATING GROUPS -->
+    <link rel="stylesheet" href="/stylesheets/group-box.css" />
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <!-- Logo + Title -->
+        <div id="topContent">
+            <img id="topLogo" src="/assets/logo.svg" alt="BullShift Logo">
+            <h2>Bull-Shift</h2>
+        </div>
+
+        <hr />
+
+        <!-- Logged-in user -->
+        <div id="loggedin-user">Loading...</div>
+
+        <hr />
+
+        <!-- Chat / Posts / Group toggles -->
+        <div id="buttDiv">
+            <button id="chatBtn" class="button chatBtn">Chat</button>
+            <button id="postsBtn" class="button postsBtn">Posts</button>
+            <button id="groupsBtn" class="button groupsBtn">Add Group</button>
+        </div>
+
+        <!-- Friend Search + Requests -->
+        <div class="friend-panel">
+            <input type="text" id="friendSearch" placeholder="Find Friends">
+            <button id="sendRequest">Add Friend</button>
+            <button id="getRequest">Requests</button>
+        </div>
+
+        <!-- Friend Request Popup -->
+        <div class="requestBox hidden"></div>
+
+        <!-- Logout -->
+        <div id="buttDiv2">
+            <button type="button" id="logoutButton">Logout</button>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="content">
+        <div id="pages-container"></div>
+    </main>
+
+    <!--THIS IS THE POPUP FOR THE GROUPBOX-->
+    <div class="groupBox hidden">
+        <div class="groupBody" id="groupBody"></div>
+
+        <button class="visSelect" id="mkeGrpBtn">Create Group</button>
+    </div>
+
+
+
+    <!-- JS -->
+    <script src="/scripts/http.js"></script>
+    <script src="/scripts/groups.js"></script>
+</body>
+</html>
