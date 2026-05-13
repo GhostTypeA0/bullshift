@@ -2,8 +2,8 @@
 // Authors: Luke Callahan, Saiyan Ren
 // Backend Integration & Cleanup: John R. Nottom IV, Addison S
 
-// BACKEND BASE URL
-const API_BASE = "http://52.14.61.43:8081";
+// BACKEND BASE URL (LOCAL MODE)
+const API_BASE = "";
 
 // DOM ELEMENTS
 const createForm = document.getElementById("createForm");
@@ -82,7 +82,7 @@ createForm.addEventListener("submit", async (e) => {
     }
 
     try {
-        const res = await fetch(`${API_BASE}/api/users/register`, {
+        const res = await fetch(`/api/users/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password })
@@ -101,7 +101,7 @@ createForm.addEventListener("submit", async (e) => {
 
         // Auto-login after registration
         setTimeout(async () => {
-            const loginRes = await fetch(`${API_BASE}/api/users/login`, {
+            const loginRes = await fetch(`/api/users/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
@@ -149,7 +149,7 @@ loginForm.addEventListener("submit", async (e) => {
     }
 
     try {
-        const res = await fetch(`${API_BASE}/api/users/login`, {
+        const res = await fetch(`/api/users/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password })

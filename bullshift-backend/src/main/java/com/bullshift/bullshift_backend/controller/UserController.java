@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://52.14.61.43")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -21,16 +20,13 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    // GET ALL USERS
     @GetMapping
     public ResponseEntity<?> getUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-    // GET USER BY USERNAME
     @GetMapping("/{username}")
     public ResponseEntity<?> getUser(@PathVariable String username) {
-
         Optional<User> userOpt = userRepository.findByUsername(username);
 
         if (userOpt.isEmpty()) {
@@ -41,7 +37,6 @@ public class UserController {
         return ResponseEntity.ok(userOpt.get());
     }
 
-    // REGISTER USER
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
 
@@ -69,7 +64,6 @@ public class UserController {
         return ResponseEntity.ok(userRepository.save(newUser));
     }
 
-    // LOGIN USER
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
@@ -94,7 +88,6 @@ public class UserController {
                 .body(new LoginResponse(false, "Invalid password", null));
     }
 
-    // UPDATE USER
     @PutMapping("/{username}")
     public ResponseEntity<?> updateUser(
             @PathVariable String username,
@@ -120,7 +113,6 @@ public class UserController {
         return ResponseEntity.ok(userRepository.save(user));
     }
 
-    // DELETE USER
     @DeleteMapping("/{username}")
     public ResponseEntity<?> deleteUser(@PathVariable String username) {
 

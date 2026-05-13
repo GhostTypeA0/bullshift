@@ -1,9 +1,9 @@
-// Assignment: Bull-Shift App | Posts - JavaScript
+// BullShift Posts — Unified Backend Version
 // Authors: Luke Callahan, Saiyan Ren
-// Unified + Backend Integration Cleanup: John R. Nottom IV, Addison S
+// Backend Integration Cleanup: John R. Nottom IV, Addison S
 
-// backend base URL
-const API_BASE = "http://52.14.61.43:8081";
+// backend base URL (LOCAL MODE)
+const API_BASE = "";
 
 // DOM elements
 const feed = document.getElementById("feed");
@@ -105,7 +105,7 @@ function formatDate(dateStr) {
 // load posts from backend
 async function loadPosts() {
     try {
-        const res = await fetch(`${API_BASE}/api/posts`);
+        const res = await fetch(`/api/posts`);
         posts = await res.json();
         renderPosts();
     } catch (err) {
@@ -196,13 +196,13 @@ async function toggleLike(iconElement, postId) {
 
     try {
         if (isLiked) {
-            await fetch(`${API_BASE}/api/posts/${id}/unlike`, { method: "POST" });
+            await fetch(`/api/posts/${id}/unlike`, { method: "POST" });
             likedPosts.delete(id);
             iconElement.style.color = "#555";
             iconElement.classList.remove("liked");
             countSpan.textContent = currentCount - 1;
         } else {
-            await fetch(`${API_BASE}/api/posts/${id}/like`, { method: "POST" });
+            await fetch(`/api/posts/${id}/like`, { method: "POST" });
             likedPosts.add(id);
             iconElement.style.color = "#007bff";
             iconElement.classList.add("liked");
@@ -248,7 +248,7 @@ async function deletePost(postId) {
     if (!confirm("Are you sure you want to delete this post?")) return;
 
     try {
-        await fetch(`${API_BASE}/api/posts/${postId}`, { method: "DELETE" });
+        await fetch(`/api/posts/${postId}`, { method: "DELETE" });
         loadPosts();
     } catch (err) {
         console.error("Error deleting post:", err);
@@ -275,7 +275,7 @@ createPostForm.addEventListener("submit", async (e) => {
         let imageData = null;
         if (file) imageData = await compressImage(file, 800, 0.8);
 
-        const res = await fetch(`${API_BASE}/api/posts`, {
+        const res = await fetch(`/api/posts`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

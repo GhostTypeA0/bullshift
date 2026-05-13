@@ -150,7 +150,7 @@ sendRequest.addEventListener("click", async () => {
         return;
     }
 
-    const res = await fetch("http://52.14.61.43:8081/api/friends/request", {
+    const res = await fetch(`/api/friends/request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -165,7 +165,7 @@ sendRequest.addEventListener("click", async () => {
 
 // LOAD PENDING REQUESTS
 async function loadPendingRequests() {
-    const res = await fetch(`http://52.14.61.43:8081/api/friends/requests/${username}`);
+    const res = await fetch(`/api/friends/requests/${username}`);
     const requests = await res.json();
 
     requestBox.innerHTML = `<h3>Friend Requests</h3><ul></ul>`;
@@ -191,14 +191,14 @@ async function loadPendingRequests() {
 
 // ACCEPT REQUEST
 async function acceptRequest(id) {
-    await fetch(`http://52.14.61.43:8081/api/friends/accept/${id}`, { method: "POST" });
+    await fetch(`/api/friends/accept/${id}`, { method: "POST" });
     loadPendingRequests();
     loadFriendList();
 }
 
 // DECLINE REQUEST
 async function declineRequest(id) {
-    await fetch(`http://52.14.61.43:8081/api/friends/decline/${id}`, { method: "POST" });
+    await fetch(`/api/friends/decline/${id}`, { method: "POST" });
     loadPendingRequests();
 }
 
@@ -209,7 +209,7 @@ async function loadFriendList() {
     const friendsListDiv = document.getElementById("friends-list");
     if (!friendsListDiv) return;
 
-    const res = await fetch(`http://52.14.61.43:8081/api/friends/${username}`);
+    const res = await fetch(`/api/friends/${username}`);
     const friends = await res.json();
 
     friendsListDiv.innerHTML = "";

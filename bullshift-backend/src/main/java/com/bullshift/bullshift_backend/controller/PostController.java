@@ -25,7 +25,7 @@ public class PostController {
         return ResponseEntity.ok(postRepository.findAllByOrderByCreatedAtDesc());
     }
 
-    // GET POST BY ID (FULL FIX APPLIED)
+    // GET POST BY ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getPost(@PathVariable Long id) {
 
@@ -53,7 +53,7 @@ public class PostController {
         return ResponseEntity.ok(postRepository.save(post));
     }
 
-    // UPDATE POST (FULL FIX APPLIED)
+    // UPDATE POST
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(
             @PathVariable Long id,
@@ -79,7 +79,7 @@ public class PostController {
         return ResponseEntity.ok(postRepository.save(post));
     }
 
-    // DELETE POST (FULL FIX APPLIED)
+    // DELETE POST
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
 
@@ -92,7 +92,7 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    // LIKE POST (FULL FIX APPLIED)
+    // LIKE POST
     @PostMapping("/{id}/like")
     @Transactional
     public ResponseEntity<?> likePost(@PathVariable Long id) {
@@ -110,8 +110,7 @@ public class PostController {
         return ResponseEntity.ok(Map.of("likeCount", likeCount));
     }
 
-    // UNLIKE POST (FULL FIX APPLIED)
-
+    // UNLIKE POST
     @PostMapping("/{id}/unlike")
     @Transactional
     public ResponseEntity<?> unlikePost(@PathVariable Long id) {
