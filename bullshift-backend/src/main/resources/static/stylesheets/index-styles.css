@@ -38,11 +38,10 @@ hr {
   border-radius: 10px;
   border: 1px solid rgb(44, 44, 44);
 
-  /* Scrollbar */
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 97vh;
-  /* Firefox-only scrollbar styling (Chrome/Safari ignore these) */
+
   scrollbar-width: thin;
   scrollbar-color: rgb(0, 158, 8) transparent;
 }
@@ -150,7 +149,6 @@ hr {
   border: 1px solid rgb(44, 44, 44);
 }
 
-/* Friend search input */
 #friendSearch {
   width: 100%;
   padding: 12px;
@@ -165,7 +163,6 @@ hr {
   color: red;
 }
 
-/* Add Friend + Requests buttons */
 #sendRequest,
 #getRequest {
   padding: 12px;
@@ -217,7 +214,6 @@ hr {
   border-bottom: 1px solid rgb(44, 44, 44);
 }
 
-/* Accept / Decline buttons */
 .acBtn,
 .dcBtn {
   font-size: 12px;
@@ -245,49 +241,6 @@ hr {
 
 .dcBtn:hover {
   background-color: rgb(100, 0, 0);
-}
-
-/* ===== FRIEND LIST ===== */
-#friends-list-container {
-  width: 208px;
-  background: rgb(22, 22, 22);
-  padding: 15px;
-  margin: 0.5%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-radius: 10px;
-  border: 1px solid rgb(44, 44, 44);
-  color: white;
-}
-
-#friends-list-container h3 {
-  margin: 0 0 5px 0;
-  color: white;
-  font-size: 16px;
-}
-
-#friends-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.friend-name {
-  padding: 12px;
-  background-color: rgb(15, 15, 15);
-  border: 1px solid rgb(44, 44, 44);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: white;
-  font-size: 14px;
-  transition: 0.2s ease;
-}
-
-.friend-name:hover {
-  background: rgb(39, 39, 39);
 }
 
 /* ===== LOGOUT BUTTON ===== */
@@ -361,4 +314,45 @@ hr {
 /* ===== PAGE FRAME ===== */
 .page-frame {
   background: rgb(22, 22, 22);
+}
+
+/* ===== CHAT USER LIST (moved from chat.html) ===== */
+#user-list {
+  width: 100%;
+  background: rgb(22, 22, 22);
+  border: 1px solid rgb(44, 44, 44);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-item {
+  padding: 10px;
+  background: rgb(15, 15, 15);
+  border: 1px solid rgb(44, 44, 44);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.user-item:hover {
+  background: rgb(39, 39, 39);
+}
+
+.user-item.active {
+    background: rgb(0, 158, 8);
+    border-color: rgb(0, 180, 10);
+    color: white;
+}
+
+.sidebar h3 {
+    color: white;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    font-weight: bold;
 }

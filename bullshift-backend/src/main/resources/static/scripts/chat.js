@@ -1,10 +1,9 @@
-// BullShift Chat — Backend/WebSocket + Saiyan UI Merge
+// BullShift Chat — Instant messaging (private + group)
 // Authors: Luke Callahan, Saiyan Ren
 // Backend/WebSocket Integration & Cleanup: John R. Nottom IV, Addison S
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // DOM ELEMENTS (MATCH EXACTLY WITH chat.html)
     const messagesDiv = document.getElementById("messages");
     const input = document.getElementById("messageInput");
     const sendButton = document.getElementById("sendButton");
@@ -16,18 +15,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const imagePreviewContainer = document.getElementById("imagePreviewContainer");
     const charCounter = document.getElementById("char-counter");
 
-    // If these elements don't exist, we are NOT on chat.html
-    if (!messagesDiv || !input || !sendButton || !userListDiv || !chatPartnerDiv) {
-        console.warn("chat.js loaded outside chat.html — skipping chat logic.");
-        return;
+    // limitedMode = running inside index.html (sidebar only, no chat UI)
+    const limitedMode =
+        !messagesDiv ||
+        !input ||
+        !sendButton ||
+        !chatPartnerDiv ||
+        !imageInput ||
+        !imageButton ||
+        !imagePreviewContainer;
+
+    if (limitedMode) {
+        console.warn("chat.js loaded outside full chat.html — limited mode (sidebar list only).");
     }
 
-    // STATE
     let username = "";
     let activeChat = null;
+    let activeGroup = null;
     let stompClient = null;
 
-    // AUTH CHECK
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (!currentUser) {
         window.location.href = "login.html";
@@ -35,24 +41,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     username = currentUser.username;
-    input.disabled = false;
-    sendButton.disabled = false;
 
-    // enforce 500 char limit at input level
-    input.maxLength = 500;
+    // Full chat UI only
+    if (!limitedMode) {
+        input.disabled = false;
+        sendButton.disabled = false;
+        input.maxLength = 500;
 
-    chatPartnerDiv.textContent = "Select a user to start chatting!";
-    renderFriendList();
-    connectWebSocket();
+        chatPartnerDiv.textContent = "Select a chat to begin.";
+        connectWebSocket();
 
-    // Auto-open chat if URL contains ?user=
-    const params = new URLSearchParams(window.location.search);
-    const friendParam = params.get("user");
-    if (friendParam) {
-        setTimeout(() => selectFriend(friendParam), 300);
+        const params = new URLSearchParams(window.location.search);
+        const friendParam = params.get("user");
+        const groupParam = params.get("group");
+
+        if (friendParam) setTimeout(() => selectFriend(friendParam), 300);
+        if (groupParam) setTimeout(() => selectGroup(Number(groupParam), `Group #${groupParam}`), 300);
     }
 
-    // TIMESTAMP HELPERS (short display + long hover)
+    // Sidebar friend/group list should always load (index.html + chat.html)
+    renderFriendList();
+
     function formatTimestampShort(ts) {
         try {
             const d = new Date(ts);
@@ -71,15 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function formatTimestampLong(ts) {
         try {
             const d = new Date(ts);
-            const options = {
+            return d.toLocaleString(undefined, {
                 weekday: "long",
                 year: "numeric",
                 month: "long",
                 day: "numeric",
                 hour: "2-digit",
                 minute: "2-digit",
-            };
-            return d.toLocaleString(undefined, options);
+            });
         } catch {
             return ts;
         }
@@ -89,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return new Date().toISOString();
     }
 
-    // IMAGE → BASE64
     function toBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -99,19 +106,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // MESSAGE BUBBLE CREATION
-    // msg: { id, sender, receiver, content, timestamp, image }
     function createMessageElement(msg) {
         const messageDiv = document.createElement("div");
         messageDiv.className = "message";
-        if (msg.id != null) {
-            messageDiv.dataset.id = msg.id;
-        }
+
+        const messageId = msg.id != null ? msg.id : msg.groupChatMessagesId;
+        if (messageId != null) messageDiv.dataset.id = messageId;
 
         const isOwn = msg.sender === username;
         messageDiv.classList.add(isOwn ? "sent" : "received");
 
-        // delete/unsend button only on own messages (backend unsend)
         if (isOwn && msg.id != null) {
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "✖";
@@ -153,28 +157,45 @@ document.addEventListener("DOMContentLoaded", () => {
         return messageDiv;
     }
 
-    // WEBSOCKET CONNECTION (leave endpoints exactly as you have them)
     function connectWebSocket() {
+        if (limitedMode) return;
+
         const socket = new SockJS("http://localhost:8081/ws");
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
-            // message stream
+
+            // PRIVATE CHAT
             stompClient.subscribe("/user/queue/messages", (frame) => {
                 const msg = JSON.parse(frame.body);
 
                 const isRelevant =
                     (msg.sender === username && msg.receiver === activeChat) ||
-                    (msg.sender === activeChat && msg.receiver === username);
+                    (msg.sender === activeChat && msg.receiver === username) ||
+                    (msg.sender === username && msg.receiver === username);
 
                 if (!isRelevant) return;
+
+                const optimistic = messagesDiv.querySelector('[data-temp="true"]');
+                if (optimistic) optimistic.remove();
 
                 const el = createMessageElement(msg);
                 messagesDiv.appendChild(el);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             });
 
-            // delete events (backend unsend broadcast)
+            // GROUP CHAT
+            stompClient.subscribe("/topic/group", (frame) => {
+                const msg = JSON.parse(frame.body);
+
+                if (Number(msg.groupChatId) !== Number(activeGroup)) return;
+
+                const el = createMessageElement(msg);
+                messagesDiv.appendChild(el);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+
+            // DELETE
             stompClient.subscribe("/user/queue/delete", (frame) => {
                 const id = Number(frame.body);
                 const el = messagesDiv.querySelector(`[data-id="${id}"]`);
@@ -183,8 +204,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // BACKEND UNSEND
     async function unsendMessage(id) {
+        if (limitedMode) return;
+
         if (!confirm("Are you sure you want to unsend this message?")) return;
 
         try {
@@ -201,10 +223,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // SEND MESSAGE
     async function sendMessage() {
-        if (!activeChat) {
-            alert("Select a user first.");
+        if (limitedMode) return;
+
+        if (!activeChat && !activeGroup) {
+            alert("Select a chat first.");
             return;
         }
 
@@ -222,25 +245,28 @@ document.addEventListener("DOMContentLoaded", () => {
         const timestamp = getTimestampNow();
         let imageData = null;
 
-        if (file) {
-            imageData = await toBase64(file);
-        }
+        if (file) imageData = await toBase64(file);
 
         const msg = {
             sender: username,
             receiver: activeChat,
+            groupChatId: activeGroup,
             content: text,
             timestamp,
             image: imageData,
         };
 
-        // send to backend via WebSocket
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(msg));
+        if (activeGroup) {
+            stompClient.send("/app/group.sendMessage", {}, JSON.stringify(msg));
+        } else {
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(msg));
 
-        // optimistic render (no id yet)
-        const el = createMessageElement(msg);
-        messagesDiv.appendChild(el);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            const optimisticMsg = { ...msg, id: null };
+            const el = createMessageElement(optimisticMsg);
+            el.dataset.temp = "true";
+            messagesDiv.appendChild(el);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
 
         input.value = "";
         imageInput.value = "";
@@ -248,8 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCharCount();
     }
 
-    // LOAD CHAT HISTORY (REST)
     async function loadMessages() {
+        if (limitedMode) return;
+
         messagesDiv.innerHTML = "";
         if (!activeChat) return;
 
@@ -278,21 +305,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // FRIEND LIST (BACKEND)
+    async function loadGroupMessages() {
+        if (limitedMode) return;
+
+        messagesDiv.innerHTML = "";
+        if (!activeGroup) return;
+
+        try {
+            const res = await fetch(`/api/groupmessages/${activeGroup}`);
+            const data = await res.json();
+
+            data.forEach((m) => {
+                const msg = {
+                    groupChatMessagesId: m.groupChatMessagesId,
+                    groupChatId: m.groupChatId,
+                    sender: m.sender,
+                    content: m.content,
+                    timestamp: m.timestamp,
+                    image: m.image,
+                };
+                const el = createMessageElement(msg);
+                messagesDiv.appendChild(el);
+            });
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        } catch (err) {
+            console.error("Error loading group messages:", err);
+        }
+    }
+
     async function renderFriendList() {
+        if (!userListDiv) return;
+
         userListDiv.innerHTML = "";
 
         try {
             const res = await fetch(`/api/friends/${username}`);
             const friends = await res.json();
 
-            if (friends.length === 0) {
-                const empty = document.createElement("p");
-                empty.textContent = "No friends yet.";
-                empty.className = "no-users";
-                userListDiv.appendChild(empty);
-                return;
-            }
+            const groupRes = await fetch(`/api/groupchats/${username}`);
+            const groups = await groupRes.json();
 
             friends.forEach((f) => {
                 const friendName = f.user1 === username ? f.user2 : f.user1;
@@ -303,17 +355,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 item.textContent = friendName;
 
                 item.addEventListener("click", () => selectFriend(friendName));
-
                 userListDiv.appendChild(item);
             });
+
+            groups.forEach((g) => {
+                const members = [
+                    g.member1, g.member2, g.member3, g.member4,
+                    g.member5, g.member6, g.member7, g.member8
+                ].filter(Boolean);
+
+                let groupName = members.join(", ");
+                if (groupName.length > 20) groupName = groupName.substring(0, 15) + "...";
+
+                const item = document.createElement("div");
+                item.className = "user-item group-item";
+                item.textContent = groupName;
+
+                item.addEventListener("click", () => selectGroup(g.groupChatId, groupName));
+                userListDiv.appendChild(item);
+            });
+
         } catch (err) {
-            console.error("Error loading friends:", err);
+            console.error("Error loading friend/group list:", err);
         }
     }
 
-    // SELECT FRIEND
     function selectFriend(friendName) {
+        if (limitedMode) return;
+
         activeChat = friendName;
+        activeGroup = null;
 
         document.querySelectorAll(".user-item").forEach((el) =>
             el.classList.remove("active")
@@ -330,55 +401,75 @@ document.addEventListener("DOMContentLoaded", () => {
         loadMessages();
     }
 
-    // CHARACTER COUNTER
+    function selectGroup(groupId, groupName) {
+        if (limitedMode) return;
+
+        activeChat = null;
+        activeGroup = groupId;
+
+        document.querySelectorAll(".user-item").forEach((el) =>
+            el.classList.remove("active")
+        );
+
+        const selected = Array.from(document.querySelectorAll(".user-item"))
+            .find((el) => el.textContent === groupName);
+
+        if (selected) selected.classList.add("active");
+
+        chatPartnerDiv.textContent = groupName;
+        input.placeholder = `message ${groupName}...`;
+
+        loadGroupMessages();
+    }
+
     function updateCharCount() {
-        if (!charCounter) return;
+        if (limitedMode || !charCounter || !input) return;
         const len = input.value.length;
         charCounter.textContent = `${len}/500`;
         charCounter.style.color = len >= 500 ? "red" : "gray";
     }
 
-    input.addEventListener("input", updateCharCount);
-    updateCharCount();
+    if (!limitedMode) {
+        input.addEventListener("input", updateCharCount);
+        updateCharCount();
 
-    // IMAGE PREVIEW (Saiyan-style wrapper)
-    imageButton.addEventListener("click", () => imageInput.click());
+        imageButton.addEventListener("click", () => imageInput.click());
 
-    imageInput.addEventListener("change", () => {
-        const file = imageInput.files[0];
-        if (!file) {
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files[0];
+            if (!file) {
+                imagePreviewContainer.innerHTML = "";
+                return;
+            }
+
             imagePreviewContainer.innerHTML = "";
-            return;
-        }
 
-        imagePreviewContainer.innerHTML = "";
+            const wrapper = document.createElement("div");
+            wrapper.className = "preview-wrapper";
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "preview-wrapper";
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            img.className = "preview-image";
 
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(file);
-        img.className = "preview-image";
+            const removeBtn = document.createElement("button");
+            removeBtn.textContent = "✖";
+            removeBtn.className = "remove-preview";
 
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "✖";
-        removeBtn.className = "remove-preview";
+            removeBtn.addEventListener("click", () => {
+                imageInput.value = "";
+                imagePreviewContainer.innerHTML = "";
+            });
 
-        removeBtn.addEventListener("click", () => {
-            imageInput.value = "";
-            imagePreviewContainer.innerHTML = "";
+            wrapper.appendChild(img);
+            wrapper.appendChild(removeBtn);
+            imagePreviewContainer.appendChild(wrapper);
         });
 
-        wrapper.appendChild(img);
-        wrapper.appendChild(removeBtn);
-        imagePreviewContainer.appendChild(wrapper);
-    });
+        sendButton.addEventListener("click", sendMessage);
 
-    // EVENTS
-    sendButton.addEventListener("click", sendMessage);
-
-    input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") sendMessage();
-    });
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") sendMessage();
+        });
+    }
 
 });

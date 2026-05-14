@@ -1,31 +1,33 @@
-// BullShift Index — Unified Layout + Friend System
-// Authors: Luke Callahan, Saiyan Ren
-// Frontend Integration & Cleanup: John R. Nottom IV, Addison S
-/* Comment style preserved per Saiyan Ren */
+// BullShift Index — Unified Layout + Friend + Group Chat System
+// Authors: Luke Callahan, Saiyan Ren, Addison Solberg
+// Frontend Integration & Cleanup: John R. Nottom IV
 
-// ------------------------------------------------------------
-// SECTION 1 — DOM ELEMENTS & GLOBAL STATE
-// ------------------------------------------------------------
+// DOM ELEMENTS
 const btnChat = document.getElementById("chatBtn");
 const btnPosts = document.getElementById("postsBtn");
+const groupsBtn = document.getElementById("groupsBtn");
+
 const container = document.getElementById("pages-container");
 const loggedInDiv = document.getElementById("loggedin-user");
 const logoutButton = document.getElementById("logoutButton");
 
+// Friend request UI
 const getRequest = document.getElementById("getRequest");
 const requestBox = document.querySelector(".requestBox");
 const sendRequest = document.getElementById("sendRequest");
 const friendSearch = document.getElementById("friendSearch");
 
+// Group popup
+const groupBox = document.querySelector(".groupBox");
+
+// STATE
 let chatActive = false;
 let postsActive = false;
 let chatFrame = null;
 let postsFrame = null;
 let username = "";
 
-// ------------------------------------------------------------
-// SECTION 2 — AUTH CHECK
-// ------------------------------------------------------------
+// AUTH CHECK
 const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
 if (!currentUser) {
@@ -37,9 +39,7 @@ if (!currentUser) {
     if (chatActive || postsActive) updateLayout();
 }
 
-// ------------------------------------------------------------
-// SECTION 3 — USER-SCOPED IFRAME STATE
-// ------------------------------------------------------------
+// SAVE/LOAD IFRAME STATE (USER-SCOPED)
 function saveIframeState() {
     if (!username) return;
     localStorage.setItem(`iframeState_${username}`, JSON.stringify({
@@ -61,9 +61,7 @@ function loadIframeState() {
     btnPosts.classList.toggle("active", postsActive);
 }
 
-// ------------------------------------------------------------
-// SECTION 4 — IFRAME CREATION + LAYOUT
-// ------------------------------------------------------------
+// CREATE IFRAMES
 function createIframes() {
     chatFrame = document.createElement("iframe");
     chatFrame.src = "/chat.html";
@@ -79,6 +77,7 @@ function createIframes() {
     container.appendChild(postsFrame);
 }
 
+// UPDATE LAYOUT
 function updateLayout() {
     if (!chatFrame && !postsFrame) createIframes();
 
@@ -102,18 +101,14 @@ function updateLayout() {
     }
 }
 
-// ------------------------------------------------------------
-// SECTION 5 — LOGOUT
-// ------------------------------------------------------------
+// LOGOUT
 logoutButton.addEventListener("click", () => {
     localStorage.removeItem("currentUser");
     localStorage.removeItem(`iframeState_${username}`);
     window.location.href = "login.html";
 });
 
-// ------------------------------------------------------------
-// SECTION 6 — CHAT / POSTS BUTTONS
-// ------------------------------------------------------------
+// CHAT / POSTS BUTTONS
 btnChat.addEventListener("click", () => {
     chatActive = !chatActive;
     btnChat.classList.toggle("active", chatActive);
@@ -128,9 +123,7 @@ btnPosts.addEventListener("click", () => {
     updateLayout();
 });
 
-// ------------------------------------------------------------
-// SECTION 7 — FRIEND REQUEST POPUP (BACKEND-POWERED)
-// ------------------------------------------------------------
+// FRIEND SYSTEM — POPUP + REQUESTS
 getRequest.addEventListener("click", async () => {
     requestBox.classList.toggle("visible");
     requestBox.classList.toggle("hidden");
@@ -189,22 +182,18 @@ async function loadPendingRequests() {
     });
 }
 
-// ACCEPT REQUEST
 async function acceptRequest(id) {
     await fetch(`/api/friends/accept/${id}`, { method: "POST" });
     loadPendingRequests();
     loadFriendList();
 }
 
-// DECLINE REQUEST
 async function declineRequest(id) {
     await fetch(`/api/friends/decline/${id}`, { method: "POST" });
     loadPendingRequests();
 }
 
-// ------------------------------------------------------------
-// SECTION 8 — FRIEND LIST (SAIYAN STYLE, BACKEND POWERED)
-// ------------------------------------------------------------
+// FRIEND LIST (SAIYAN STYLE)
 async function loadFriendList() {
     const friendsListDiv = document.getElementById("friends-list");
     if (!friendsListDiv) return;
@@ -241,9 +230,7 @@ async function loadFriendList() {
 
 document.addEventListener("DOMContentLoaded", loadFriendList);
 
-// ------------------------------------------------------------
-// SECTION 9 — OPEN CHAT WITH FRIEND
-// ------------------------------------------------------------
+// OPEN PRIVATE CHAT
 function openChat(friendName) {
     chatActive = true;
     postsActive = false;
@@ -257,23 +244,136 @@ function openChat(friendName) {
     chatFrame.src = `/chat.html?user=${friendName}`;
 }
 
-// ------------------------------------------------------------
-// SECTION 10 — NOTIFICATIONS (FULL ENABLED)
-// ------------------------------------------------------------
-function friendRequestNotif(sender) {
-    if (Notification.permission === "granted") {
-        new Notification("Incoming Friend Request!", {
-            body: `${sender} has sent you a friend request!`
-        });
+// GROUP POPUP
+groupsBtn.addEventListener("click", () => {
+    const isHidden = groupBox.classList.contains("hidden");
+
+    if (isHidden) {
+        groupBox.classList.remove("hidden");
+
+        const measure = groupsBtn.getBoundingClientRect();
+        groupBox.style.top = (measure.bottom - groupBox.offsetHeight) + "px";
+        groupBox.style.left = (measure.right + 10) + "px";
+
+        groupBox.classList.add("visible");
+        loadPendingGroup();
+        loadGroupList();
     } else {
-        Notification.requestPermission();
+        groupBox.classList.remove("visible");
+        groupBox.classList.add("hidden");
     }
+});
+
+// LOAD FRIENDS FOR GROUP CREATION
+async function loadPendingGroup() {
+    const groupBody = document.getElementById("groupBody");
+    const res = await fetch(`/api/friends/${username}`);
+    const friends = await res.json();
+
+    groupBody.innerHTML = "";
+
+    let groupMembers = [username];
+
+    friends.forEach(f => {
+        const friendName = f.user1 === username ? f.user2 : f.user1;
+        const button = document.createElement("button");
+
+        button.textContent = friendName;
+        button.classList.add("groupFriendsCSS");
+
+        button.addEventListener("click", () => {
+            button.classList.toggle("selected");
+
+            if (button.classList.contains("selected")) {
+                if (groupMembers.length >= 8) {
+                    button.classList.remove("selected");
+                    alert("Maximum group size is 8.");
+                    return;
+                }
+                groupMembers.push(friendName);
+            } else {
+                const idx = groupMembers.indexOf(friendName);
+                if (idx !== -1) groupMembers.splice(idx, 1);
+            }
+        });
+
+        groupBody.appendChild(button);
+    });
+
+    const createBtn = document.getElementById("mkeGrpBtn");
+    createBtn.onclick = () => {
+        if (groupMembers.length < 3) {
+            alert("Select at least 2 friends to create a group.");
+            return;
+        }
+        groupChatCreate(groupMembers);
+    };
 }
 
-function messageNotif(sender, message) {
-    if (Notification.permission === "granted") {
-        new Notification(`${sender}:`, { body: message });
-    } else {
-        Notification.requestPermission();
+// CREATE GROUP CHAT
+async function groupChatCreate(groupMembers) {
+    await fetch("/api/groupchats/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            member1: groupMembers[0] || null,
+            member2: groupMembers[1] || null,
+            member3: groupMembers[2] || null,
+            member4: groupMembers[3] || null,
+            member5: groupMembers[4] || null,
+            member6: groupMembers[5] || null,
+            member7: groupMembers[6] || null,
+            member8: groupMembers[7] || null
+        })
+    });
+
+    alert("Group created!");
+    loadGroupList();
+}
+
+// LOAD GROUP CHAT LIST
+async function loadGroupList() {
+    const groupListDiv = document.getElementById("group-list");
+    if (!groupListDiv) return;
+
+    const res = await fetch(`/api/groupchats/${username}`);
+    const groups = await res.json();
+
+    groupListDiv.innerHTML = "";
+
+    if (groups.length === 0) {
+        groupListDiv.innerHTML = `<p class="no-groups">No group chats yet.</p>`;
+        return;
     }
+
+    groups.forEach(g => {
+        const div = document.createElement("div");
+        div.className = "group-entry";
+
+        const label = document.createElement("p");
+        label.textContent = `Group #${g.groupChatId}`;
+
+        const openBtn = document.createElement("button");
+        openBtn.textContent = "open";
+        openBtn.className = "acBtn";
+        openBtn.onclick = () => openGroupChat(g.groupChatId);
+
+        div.appendChild(label);
+        div.appendChild(openBtn);
+        groupListDiv.appendChild(div);
+    });
+}
+
+// OPEN GROUP CHAT
+function openGroupChat(groupId) {
+    chatActive = true;
+    postsActive = false;
+    saveIframeState();
+
+    btnChat.classList.add("active");
+    btnPosts.classList.remove("active");
+
+    updateLayout();
+
+    chatFrame.src = `/chat.html?group=${groupId}`;
 }

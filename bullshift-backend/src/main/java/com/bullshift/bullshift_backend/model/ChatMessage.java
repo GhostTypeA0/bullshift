@@ -1,40 +1,70 @@
 package com.bullshift.bullshift_backend.model;
 
-// Simple DTO used for WebSocket communication.
-// Not a JPA entity — this is only for sending/receiving chat payloads.
 public class ChatMessage {
 
-    // Username of the sender
     private String sender;
-
-    // Username of the receiver (private 1:1 chat)
     private String receiver;
-
-    // Actual text content of the message
+    private Long groupChatId;
     private String content;
     private String image;
+    private String timestamp;
 
-    // Empty constructor required for JSON deserialization
     public ChatMessage() {}
 
-    // Convenience constructor for manual creation
-    public ChatMessage(String sender, String receiver, String content) {
+    public ChatMessage(String sender, String receiver, Long groupChatId, String content, String image, String timestamp) {
         this.sender = sender;
         this.receiver = receiver;
+        this.groupChatId = groupChatId;
+        this.content = content;
+        this.image = image;
+        this.timestamp = timestamp;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public Long getGroupChatId() {
+        return groupChatId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public void setGroupChatId(Long groupChatId) {
+        this.groupChatId = groupChatId;
+    }
+
+    public void setContent(String content) {
         this.content = content;
     }
 
-    // Standard getters/setters — used by Spring + WebSocket mapping
-    public String getSender() { return sender; }
-    public void setSender(String sender) { this.sender = sender; }
+    public void setImage(String image) {
+        this.image = image;
+    }
 
-    public String getReceiver() { return receiver; }
-    public void setReceiver(String receiver) { this.receiver = receiver; }
-
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-
-    public String getImage() { return image; }
-    public void setImage(String image) { this.image = image; }
-
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 }

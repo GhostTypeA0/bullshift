@@ -7,6 +7,7 @@
 
     <!-- Sidebar + layout styling -->
     <link rel="stylesheet" href="/stylesheets/index-styles.css" />
+     <link rel="stylesheet" href="/stylesheets/group-box.css" />
 </head>
 
 <body>
@@ -27,10 +28,11 @@
 
         <hr />
 
-        <!-- Chat / Posts toggles -->
+        <!-- Chat / Posts toggles / Group toggles -->
         <div id="buttDiv">
             <button id="chatBtn" class="button chatBtn">Chat</button>
             <button id="postsBtn" class="button postsBtn">Posts</button>
+            <button id="groupsBtn" class="button groupsBtn">Add Group</button>
         </div>
 
         <!-- Friend Search + Requests -->
@@ -43,12 +45,6 @@
         <!-- Friend Request Popup -->
         <div class="requestBox hidden"></div>
 
-        <!-- Friend List -->
-        <div id="friends-list-container">
-            <hr />
-            <h3>Friends</h3>
-            <div id="friends-list"></div>
-        </div>
 
         <!-- Logout -->
         <div id="buttDiv2">
@@ -62,7 +58,15 @@
         <div id="pages-container"></div>
     </main>
 
+    <!--THIS IS THE POPUP FOR THE GROUPBOX-->
+    <div class="groupBox hidden">
+        <div class="groupBody" id="groupBody"></div>
+
+        <button class="visSelect" id="mkeGrpBtn">Create Group</button>
+    </div>
+
     <!-- JS -->
     <script src="/scripts/http.js"></script>
+    <script src="/scripts/groups.js"></script>
 </body>
 </html>
